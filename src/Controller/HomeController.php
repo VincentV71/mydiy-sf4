@@ -2,8 +2,11 @@
 
 namespace App\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use App\Entity\Arome;
+use App\Repository\AromeRepository;
+use Doctrine\Common\Persistence\ObjectManager;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class HomeController extends AbstractController
 {
@@ -26,6 +29,17 @@ class HomeController extends AbstractController
             'controller_name' => 'HomeController',
         ]);
     }
+    // public function connectUser(ObjectManager $manager, AromeRepository $repo)
+    // {
+    //     // $myArome = new Arome ;
+    //     // $myArome = $repo->find(1);
+    //     // $manager->remove($myArome);
+    //     // $manager->flush();
+
+    //     return $this->render('home/connection.html.twig', [
+    //         'controller_name' => 'HomeController',
+    //     ]);
+    // }
 
     /**
      * @Route("/inscription", name="register")
