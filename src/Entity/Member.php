@@ -61,8 +61,8 @@ class Member implements UserInterface
      * @Assert\Length(
      *  min="3",
      *  max="3",
-     *  minMessage ="Seuls les mots oui ou non sont acceptés ici",
-     *  maxMessage ="Seuls les mots oui ou non sont acceptés ici")
+     *  minMessage ="Seuls les mots oui ou non sont acceptés",
+     *  maxMessage ="Seuls les mots oui ou non sont acceptés")
      */
     private $affMember;
 

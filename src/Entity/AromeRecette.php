@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * AromeRecette
@@ -35,6 +36,17 @@ class AromeRecette
 
     /**
      * @ORM\Column(type="decimal", precision=3, scale=1)
+     * @Assert\Regex(
+     *  "/^[1-5]?[0-9]*(\\.|\\,)?[0-9]?$/",
+     *  message = "La valeur : {{ value }} n'est pas conforme"
+     *  )
+     * @Assert\Range(
+     *      min = 1,
+     *      max = 50,
+     *      minMessage = "Le dosage minimum est de 1 %",
+     *      maxMessage = "Le dosage maximum est de 50 %",
+     *      invalidMessage = "Entrez un nombre entier ou à une décimale, entre 5 et 50",
+     * )
      */
     private $dosAro;
 

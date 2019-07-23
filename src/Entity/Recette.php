@@ -5,6 +5,7 @@ namespace App\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Recette
@@ -31,16 +32,34 @@ class Recette
     private $datRecet;
 
     /**
-     * @var string|null
+     * @var string
      *
-     * @ORM\Column(name="qte_aro", type="decimal", precision=4, scale=1, nullable=true)
+     * @ORM\Column(name="qte_aro", type="decimal", precision=4, scale=1, nullable=false)
+     * @Assert\NotBlank
+     * @Assert\Regex("/[0-9]+[0-9]*(\.|\,)?[0-9]?$/")
+     * @Assert\Range(
+     *    min = 0.1,
+     *    max = 500,
+     *    minMessage = "La valeur minimum est de 0.1 ml",
+     *    maxMessage = "La valeur maximum est de 500 ml",
+     *    invalidMessage = "Entrez un nombre entier ou à une décimale, entre 0.1 et 500",
+     *  )
      */
     private $qteAro;
 
     /**
-     * @var string|null
+     * @var string
      *
-     * @ORM\Column(name="qte_bas", type="decimal", precision=4, scale=1, nullable=true)
+     * @ORM\Column(name="qte_bas", type="decimal", precision=4, scale=1, nullable=false)
+     * @Assert\NotBlank
+     * @Assert\Regex("/[0-9]+[0-9]*(\.|\,)?[0-9]?$/")
+     * @Assert\Range(
+     *    min = 2.5,
+     *    max = 990,
+     *    minMessage = "La valeur minimum est de 2.5 ml",
+     *    maxMessage = "La valeur maximum est de 990 ml",
+     *    invalidMessage = "Entrez un nombre entier ou à une décimale, entre 2.5 et 990",
+     *  )
      */
     private $qteBas;
 
@@ -48,6 +67,14 @@ class Recette
      * @var int
      *
      * @ORM\Column(name="qte_tot", type="integer", nullable=false)
+     * @Assert\Type(type="integer")
+     * @Assert\Range(
+     *      min = 5,
+     *      max = 1000,
+     *      minMessage = "La valeur minimum est de 5 ml",
+     *      maxMessage = "La valeur maximum est de 1000 ml",
+     *      invalidMessage = "Entrez un nombre entier, entre 5 et 1000",
+     * )
      */
     private $qteTot;
 
@@ -59,9 +86,15 @@ class Recette
     private $datStee;
 
     /**
-     * @var string|null
+     * @var string
      *
-     * @ORM\Column(name="eta_stee", type="string", length=5, nullable=true, options={"fixed"=true})
+     * @ORM\Column(name="eta_stee", type="string", length=5, nullable=false, options={"fixed"=true})
+     * @Assert\Regex("/(STEEP|PRETE|FINIE)/")
+     * @Assert\Length(
+     *  min="5",
+     *  max="5",
+     *  minMessage ="Seuls les mots STEEP, PRETE ou FINIE sont acceptés",
+     *  maxMessage ="Seuls les mots STEEP, PRETE ou FINIE sont acceptés")
      */
     private $etaStee;
 
@@ -69,6 +102,11 @@ class Recette
      * @var string|null
      *
      * @ORM\Column(name="com_member", type="text", length=0, nullable=true)
+     * @Assert\Length(
+     *  min="3",
+     *  max="70",
+     *  minMessage="Votre commentaire doit comporter 3 caractères minimum",
+     *  maxMessage="Votre commentaire doit comporter 70 caractères maximum")
      */
     private $comMember;
 
@@ -76,13 +114,27 @@ class Recette
      * @var string|null
      *
      * @ORM\Column(name="aff_recet", type="string", length=3, nullable=true, options={"fixed"=true})
+     * @Assert\Regex("/(oui|non)/i")
+     * @Assert\Length(
+     *  min="3",
+     *  max="3",
+     *  minMessage ="Seuls les mots oui ou non sont acceptés",
+     *  maxMessage ="Seuls les mots oui ou non sont acceptés")
      */
     private $affRecet;
 
     /**
-     * @var int
+     * @var int|null
      *
-     * @ORM\Column(name="etoiles", type="integer", nullable=false)
+     * @ORM\Column(name="etoiles", type="integer", nullable=true)
+     * @Assert\Type(type="integer")
+     * @Assert\Range(
+     *      min = 0,
+     *      max = 5,
+     *      minMessage = "La note minimum est de 0",
+     *      maxMessage = "La note maximum est de 5",
+     *      invalidMessage = "Entrez un nombre entier, entre 0 et 5",
+     * )
      */
     private $etoiles;
 
@@ -188,7 +240,7 @@ class Recette
 
     public function setEtaStee(?string $etaStee): self
     {
-        $this->etaStee = $etaStee;
+        $this->etaStee = strtoupper($etaStee);
 
         return $this;
     }

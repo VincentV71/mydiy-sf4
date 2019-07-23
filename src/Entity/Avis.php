@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Avis
@@ -22,16 +23,31 @@ class Avis
     private $idAvis;
 
     /**
-     * @var string|null
+     * @var string
      *
-     * @ORM\Column(name="text_avi", type="text", length=65535, nullable=true)
+     * @ORM\Column(name="text_avi", type="text", length=500, nullable=false)
+     * @Assert\NotBlank
+     * @Assert\Length(
+     *  min="5",
+     *  max="500",
+     *  minMessage="Votre commentaire doit comporter 5 caractères minimum",
+     *  maxMessage="Votre commentaire doit comporter 500 caractères maximum")
      */
     private $textAvi;
 
     /**
-     * @var int|null
+     * @var int
      *
-     * @ORM\Column(name="note_avi", type="smallint", nullable=true)
+     * @ORM\Column(name="note_avi", type="smallint", nullable=false)
+     * @Assert\Type(type="integer")
+     * @Assert\NotBlank(message="Noter cette recette (de 0 à 5) est obligatoire")
+     * @Assert\Range(
+     *      min = 0,
+     *      max = 5,
+     *      minMessage = "La note minimum est de 0",
+     *      maxMessage = "La note maximum est de 5",
+     *      invalidMessage = "Entrez un nombre entier, entre 0 et 5",
+     * )
      */
     private $noteAvi;
 
@@ -46,6 +62,12 @@ class Avis
      * @var string|null
      *
      * @ORM\Column(name="aff_avi", type="string", length=3, nullable=true)
+     * @Assert\Regex("/(oui|non)/i")
+     * @Assert\Length(
+     *  min="3",
+     *  max="3",
+     *  minMessage ="Seuls les mots oui ou non sont acceptés",
+     *  maxMessage ="Seuls les mots oui ou non sont acceptés")
      */
     private $affAvi;
 
@@ -145,6 +167,4 @@ class Avis
 
         return $this;
     }
-
-
 }

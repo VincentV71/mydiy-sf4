@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Prix
@@ -22,9 +23,18 @@ class Prix
     private $idPrix;
 
     /**
-     * @var string|null
+     * @var string
      *
-     * @ORM\Column(name="prix", type="decimal", precision=4, scale=2, nullable=true)
+     * @ORM\Column(name="prix", type="decimal", precision=4, scale=2, nullable=false)
+     * @Assert\NotBlank
+     * @Assert\Regex("/^[0-9]?[0-9]*(\.|\,)?[0-9]?[05]?$/")
+     * @Assert\Range(
+     *    min = 0.05,
+     *    max = 100,
+     *    minMessage = "La valeur minimum est de 0.05",
+     *    maxMessage = "La valeur maximum est de 100",
+     *    invalidMessage = "Entrez un nombre entier ou décimal, entre 0.5 et 100",
+     *  )
      */
     private $prix;
 
@@ -32,20 +42,44 @@ class Prix
      * @var string
      *
      * @ORM\Column(name="qte_btlle", type="decimal", precision=3, scale=1, nullable=false)
+     * @Assert\NotBlank
+     * @Assert\Regex("/^[1-9]?[0-9]*(\.|\,)?[05]?$/")
+     * @Assert\Range(
+     *    min = 10,
+     *    max = 50,
+     *    minMessage = "La valeur minimum est de 10",
+     *    maxMessage = "La valeur maximum est de 50",
+     *    invalidMessage = "Entrez un nombre entier ou décimal, entre 10 et 50",
+     *  )
      */
     private $qteBtlle;
 
     /**
-     * @var string|null
+     * @var string
      *
-     * @ORM\Column(name="fournis", type="text", length=0, nullable=true)
+     * @ORM\Column(name="fournis", type="text", length=0, nullable=false)
+     * @Assert\NotBlank
+     * @Assert\Length(
+     *  min="3",
+     *  max="40",
+     *  minMessage="Le nom du fournisseur doit comporter 3 caractères minimum",
+     *  maxMessage="Le nom du fournisseur doit comporter 40 caractères maximum")
      */
     private $fournis;
 
     /**
-     * @var string|null
+     * @var string
      *
-     * @ORM\Column(name="e_com", type="text", length=0, nullable=true)
+     * @ORM\Column(name="e_com", type="text", length=0, nullable=false)
+     * @Assert\NotBlank
+     * @Assert\Url(
+     *  relativeProtocol = true,
+     *  message="Cette adresse web n'est pas valide")
+     * @Assert\Length(
+     *  min="10",
+     *  max="60",
+     *  minMessage="L'URL doit comporter 10 caractères minimum",
+     *  maxMessage="L'URL doit comporter 60 caractères maximum")
      */
     private $eCom;
 
@@ -123,6 +157,4 @@ class Prix
 
         return $this;
     }
-
-
 }

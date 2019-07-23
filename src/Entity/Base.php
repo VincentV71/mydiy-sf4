@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Base
@@ -25,6 +26,15 @@ class Base
      * @var int
      *
      * @ORM\Column(name="dos_pg", type="integer", nullable=false)
+     * @Assert\NotBlank
+     * @Assert\Regex("/^([1][0][0])|([1-9][0]|[0])$/")
+     * @Assert\Range(
+     *      min = 0,
+     *      max = 100,
+     *      minMessage = "Le dosage minimum est de 0 %",
+     *      maxMessage = "Le dosage maximum est de 100 %",
+     *      invalidMessage = "Entrez un multiple de 10, entre 0 et 100 %",
+     * )
      */
     private $dosPg;
 
@@ -32,6 +42,15 @@ class Base
      * @var int
      *
      * @ORM\Column(name="dos_vg", type="integer", nullable=false)
+     * @Assert\NotBlank
+     * @Assert\Regex("/^([1][0][0])|([1-9][0]|[0])$/")
+     * @Assert\Range(
+     *      min = 0,
+     *      max = 100,
+     *      minMessage = "Le dosage minimum est de 0 %",
+     *      maxMessage = "Le dosage maximum est de 100 %",
+     *      invalidMessage = "Entrez un multiple de 10, entre 0 et 100 %",
+     * )
      */
     private $dosVg;
 
@@ -39,6 +58,15 @@ class Base
      * @var string
      *
      * @ORM\Column(name="correctif", type="decimal", precision=2, scale=1, nullable=false)
+     * @Assert\NotBlank
+     * @Assert\Regex("/[0-2](\.[0-9]|\,[0-9])/")
+     * @Assert\Range(
+     *      min = 0.1,
+     *      max = 2,
+     *      minMessage = "La valeur minimum est de 0.1",
+     *      maxMessage = "La valeur maximum est de 2",
+     *      invalidMessage = "Entrez une valeur entière ou à une décimale, entre 0.1 et 2",
+     * )
      */
     private $correctif;
 
@@ -87,6 +115,4 @@ class Base
     {
         return strval($this->idBase);
     }
-
-
 }

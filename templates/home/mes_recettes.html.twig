@@ -1,9 +1,236 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello HomeController!{% endblock %}
+{% block title %}Hello HomeController!
+{% endblock %}
 
 {% block body %}
 
-<h1>MES RECETTES</h1>
+
+    <div class="container">
+        <div class="row mt-3 pl-3">
+            <h1>MES RECETTES</h1>
+            <medium class="text mr-5 mb-2">Bienvenue
+                <strong>Vincent</strong>, vous avez
+                <strong>18</strong>
+                recettes actives.
+            </medium>
+            <br>
+            {#  REACTIVER une RECETTE  #}
+            {# Bouton Réactiver une recette  #}
+                <div class="justify-content-end"> <form action="" method="POST">
+                    <input class="btn btn-secondary btn-sm " name="reveil_recette" type="submit" value="REACTIVER UNE RECETTE"/>
+                </form>
+            </div>
+        </div>
+        <hr>
+        {#  message d'erreur  #}
+
+        {#  TRI  #}
+            <div class="row mt-3 pl-3"> <div class="justify-content-start">
+                <form action="" method="POST">
+                    <label for="tri_recette">Trier les recettes par :</label>
+                    <select name="tri_recette">
+                        <option value="DAT_RECET ASC">date de création (croissante)</option>
+                        <option value="DAT_RECET DESC">date de création (décroissante)</option>
+                        <option value="DAT_STEE ASC">date de steep (croissante)</option>
+                        <option value="DAT_STEE DESC">date de steep (décroissante)</option>
+                        <option value="NOM_ARO">arôme</option>
+                        <option value="FAB_ARO">fabricant</option>
+                        <option value="ETA_STEE">état du steep</option>
+                        <option value="ETOILES DESC">notation étoiles</option>
+                        <option value="DOS_ARO">dosage</option>
+                        <option value="BASE.ID_BASE">type de base</option>
+                    </select>
+                    <input class="btn btn-secondary btn-sm" type="submit" value="Afficher"/>
+                </form>
+            </div>
+        </div>
+        <hr>
+        {#  AFFICHAGE des Recettes #}
+        <div class="container-fluid p-0">
+            <div
+                class="row">
+                {#  Début du FETCH #}
+                <div class="col-xs-12 col-sm-6 col-md-6 col-lg-4 col-xl-3 mb-3 ">
+                    <div class="card pt-1 {{ etat-steep__voir_CSS}}">
+                        <div class="cartouche">
+                            <strong>
+                                <?php echo ($donnees['ETA_STEE']); ?>
+                            </strong>
+                            <h3 class="mt-3 text-uppercase">
+                                <strong><?php echo $donnees['NOM_ARO']; ?></strong>
+                            </h3>
+                            <h5 class="text-uppercase">
+                                <em><?php echo $donnees['FAB_ARO']; ?></em>
+                            </h5>
+                            <p class="pb-2">
+                                <strong><?php echo $donnees['DOS_ARO']; ?>
+                                    %</strong>
+                            </p>
+                        </div>
+                        <div class="card-block">
+                            <p>
+                                <em><?php echo $donnees['COM_USER']; ?></em>
+                            </p>
+                            <div class="badge badge-pill badge-default mb-1 pt-1">Base
+                                <?php echo $donnees[ 'DOS_PG']; ?>
+                                /
+                                <?php echo $donnees[ 'DOS_VG']; ?>
+                            </div>
+                            <span class="badge badge-pill badge-default"><?php echo $donnees['QTE_BAS']; ?>
+                                ml (base) +
+                                <?php echo $donnees['QTE_ARO']; ?>
+                                ml (arôme)</span>
+                            <span class="badge badge-pill badge-default mb-3">Qté totale :
+                                <?php echo $donnees['QTE_TOT']; ?>
+                                ml</span>
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item">
+                                    <span>
+                                        <?php 
+    					$etoiles = $donnees['ETOILES'];
+    					if ($etoiles==0) {
+    						?>
+                                        <img height="28" src="static/img/star_outline_36px.png" width="28"><img height="28" src="static/img/star_outline_36px.png" width="28"><img height="28" src="static/img/star_outline_36px.png" width="28"><img height="28" src="static/img/star_outline_36px.png" width="28"><img height="28" src="static/img/star_outline_36px.png" width="28">
+                                    <?php
+    					} 
+    					else {
+    						for ($i=0; $i < ($etoiles); $i++){
+    							?>
+                                        <img height="28" src="static/img/star_36px.png" width="28">
+                                        <?php 
+    						}
+    						$i++;
+    						for ($i; $i<=5; $i++){
+    							?>
+                                        <img height="28" src="static/img/star_outline_36px.png" width="28">
+                                        <?php 
+    						} 
+    					}
+    					?>
+                                    </span>
+                                </li>
+                                <li class="list-group-item">Date création :
+                                    <?php echo $donnees[ 'DAT_RECET']; ?>
+                                </li>
+                                <li class="list-group-item">Steep estim. :
+                                    <?php echo $donnees[ 'DAT_STEE']; ?>
+                                </li>
+                            </ul>
+
+                            {# DropUp menu PRIMAIRE #}
+                            <div class="dropup mt-3">
+                                <button aria-expanded="false" aria-haspopup="true" class="btn btn-secondary dropdown-toggle w-100" data-toggle="dropdown" id="dropdownMenu2" type="button">
+                                    Modifier
+                                </button>
+                                <div aria-labelledby="dropdownMenu2" class="dropdown-menu">
+                                    <button aria-controls="deplieEtoiles<?php echo ($donnees['ID_RECET']); ?>" aria-expanded="false" class="dropdown-item" data-target="#deplieEtoiles<?php echo ($donnees['ID_RECET']); ?>" data-toggle="collapse" type="button">Noter</button>
+
+                                    <button aria-controls="deplieCommentaires<?php echo ($donnees['ID_RECET']); ?>" aria-expanded="false" class="dropdown-item" data-target="#deplieCommentaires<?php echo ($donnees['ID_RECET']); ?>" data-toggle="collapse" type="button">Commenter</button>
+
+                                    <button aria-controls="deplieSteep<?php echo ($donnees['ID_RECET']); ?>" aria-expanded="false" class="dropdown-item" data-target="#deplieSteep<?php echo ($donnees['ID_RECET']); ?>" data-toggle="collapse" type="button">Modifier l'état du
+                                                                                steep</button>
+
+                                    <button aria-controls="deplieSupprimer<?php echo ($donnees['ID_RECET']); ?>" aria-expanded="false" class="dropdown-item" data-target="#deplieSupprimer<?php echo ($donnees['ID_RECET']); ?>" data-toggle="collapse" type="button">Supprimer</button>
+                                </div>
+                            </div>
+                            {# fin du Dropdown menu PRIMAIRE #}
+
+                            {# SHOW/HIDDEN pour les ETOILES #}
+                            <div class="collapse mt-2" id="deplieEtoiles<?php echo ($donnees['ID_RECET']); ?>">
+                                <div class="row">
+                                    <form
+                                        action="../controllers/mes_recettesController.php" method="POST">
+                                        {#  Bouton HIDDEN : récupération du N° de la recette  #}
+                                        <input
+                                        name="ID_RECET" type="hidden" value="<?php echo ($donnees['ID_RECET']); ?>">
+                                        {#  Nouvelle Notation : ETOILES; (A faire en SHOW/HIDE)  #}
+                                        <label for="ETOILES">Entrez votre note (de 0 à 5) :</label>
+                                        <select name="ETOILES">
+                                            <option>0</option>
+                                            <option>1</option>
+                                            <option>2</option>
+                                            <option>3</option>
+                                            <option>4</option>
+                                            <option>5</option>
+                                        </select>
+                                        <input type="submit"/>
+                                    </form>
+                                    <button aria-controls="deplieEtoiles<?php echo ($donnees['ID_RECET']); ?>" aria-expanded="false" class="btn btn-secondary btn-md mt-2" data-target="#deplieEtoiles<?php echo ($donnees['ID_RECET']); ?>" data-toggle="collapse" type="button">X</button>
+                                </div>
+                            </div>
+                            {# FIN du SHOW/HIDDEN pour les ETOILES #}
+
+                            {# SHOW/HIDDEN pour les COMMENTAIRES #}
+                            <div class="collapse mt-2" id="deplieCommentaires<?php echo ($donnees['ID_RECET']); ?>">
+                                <div class="row">
+                                    <form
+                                        action="../controllers/mes_recettesController.php" method="POST">
+                                        {#  Bouton HIDDEN : récupération du N° de la recette  #}
+                                        <input
+                                        name="ID_RECET" type="hidden" value="<?php echo ($donnees['ID_RECET']); ?>">
+                                        {# Nouveau COMMENTAIRE : COM_USER; (A faire en SHOW/HIDE)  #}
+                                        <label for="COM_USER">Entrez votre commentaire :</label>
+                                        <textarea class="w-95 mr-1 ml-1" maxlength="70" name="COM_USER" placeholder="(70 caractères maximum)" type="texte" value=""></textarea>
+                                        <input type="submit"/>
+                                    </form>
+                                    <button aria-controls="deplieCommentaires<?php echo ($donnees['ID_RECET']); ?>" aria-expanded="false" class="btn btn-secondary btn-md mt-2" data-target="#deplieCommentaires<?php echo ($donnees['ID_RECET']); ?>" data-toggle="collapse" type="button">X</button>
+                                </div>
+                            </div>
+                            {# FIN du SHOW/HIDDEN pour les COMMENTAIRES #}
+
+                            {# SHOW/HIDDEN pour le STEEP #}
+                            <div class="collapse mt-2" id="deplieSteep<?php echo ($donnees['ID_RECET']); ?>">
+                                <div class="row">
+                                    <form
+                                        action="../controllers/mes_recettesController.php" method="POST">
+                                        {#  Bouton HIDDEN : récupération du N° de la recette  #}
+                                        <input
+                                        name="ID_RECET" type="hidden" value="<?php echo ($donnees['ID_RECET']); ?>">
+                                        {# Nouveau STEEP : ETOILES; (A faire en SHOW/HIDE)  #}
+                                        <label for="ETA_STEE">Actualisez le Steep :</label>
+                                        <select name="ETA_STEE">
+                                            <option>STEEP</option>
+                                            <option>PRETE</option>
+                                            <option>FINIE</option>
+                                        </select>
+                                        <input type="submit"/>
+                                    </form>
+                                    <button aria-controls="deplieSteep<?php echo ($donnees['ID_RECET']); ?>" aria-expanded="false" class="btn btn-secondary btn-md mt-2" data-target="#deplieSteep<?php echo ($donnees['ID_RECET']); ?>" data-toggle="collapse" type="button">X</button>
+                                </div>
+                            </div>
+                            {# FIN du SHOW/HIDDEN pour le STEEP #}
+
+                            {# SHOW/HIDDEN pour SUPPRIMER #}
+                            <div class="collapse mt-2" id="deplieSupprimer<?php echo ($donnees['ID_RECET']); ?>">
+                                <div class="row">
+                                    <form
+                                        action="../controllers/mes_recettesController.php" method="POST">
+                                        {#  Bouton HIDDEN : récupération du N° de la recette  #}
+                                        <input
+                                        name="ID_RECET" type="hidden" value="<?php echo ($donnees['ID_RECET']); ?>">
+                                        {# Nouveau STEEP : ETOILES; (A faire en SHOW/HIDE)  #}
+                                        <label for="AFF_RECET">Rendre cette recette inactive ?</label>
+                                        <select name="AFF_RECET">
+                                            <option value="non">Oui</option>
+                                            <option value="oui">Non</option>
+                                        </select>
+                                        <input type="submit" value="Confirmer"/>
+                                    </form>
+                                    <button aria-controls="deplieSupprimer<?php echo ($donnees['ID_RECET']); ?>" aria-expanded="false" class="btn btn-secondary btn-md mt-2" data-target="#deplieSupprimer<?php echo ($donnees['ID_RECET']); ?>" data-toggle="collapse" type="button">X</button>
+                                </div>
+                            </div>
+                            {# FIN du SHOW/HIDDEN SUPPRIMER #}
+                        </div>
+                    </div>
+                </div>
+                <?php } ?>
+                {# fin de la partie à faire BOUCLER #}
+            </div>
+            {# fin de Div ROW (hors du FETCH) #}
+        </div>
+    </div>
+    {#  fin DIV CONTAINER principal  #}
+
 
 {% endblock %}

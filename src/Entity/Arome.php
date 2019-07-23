@@ -5,6 +5,7 @@ namespace App\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Arome
@@ -27,6 +28,11 @@ class Arome
      * @var string
      *
      * @ORM\Column(name="nom_aro", type="string", length=25, nullable=false, options={"fixed"=true})
+     * @Assert\Length(
+     *  min="3",
+     *  max="25",
+     *  minMessage ="Le nom d'un arôme doit comporter 3 caractères minimum",
+     *  maxMessage ="Le nom d'un arôme doit comporter 25 caractères maximum")
      */
     private $nomAro;
 
@@ -34,6 +40,11 @@ class Arome
      * @var string
      *
      * @ORM\Column(name="fab_aro", type="string", length=35, nullable=false, options={"fixed"=true})
+     * @Assert\Length(
+     *  min="3",
+     *  max="35",
+     *  minMessage ="Le nom du fabricant doit comporter 3 caractères minimum",
+     *  maxMessage ="Le nom du fabricant doit comporter 35 caractères maximum")
      */
     private $fabAro;
 
@@ -41,6 +52,14 @@ class Arome
      * @var int
      *
      * @ORM\Column(name="dos_fab", type="integer", nullable=false)
+     * @Assert\Type(type="integer")
+     * @Assert\Range(
+     *      min = 5,
+     *      max = 50,
+     *      minMessage = "Le dosage minimum est de 5 %",
+     *      maxMessage = "Le dosage maximum est de 50 %",
+     *      invalidMessage = "Entrez un nombre entier, entre 5 et 50",
+     * )
      */
     private $dosFab;
 
@@ -48,6 +67,14 @@ class Arome
      * @var int
      *
      * @ORM\Column(name="nb_j_stee", type="integer", nullable=false)
+     * @Assert\Type(type="integer")
+     * @Assert\Range(
+     *      min = 1,
+     *      max = 100,
+     *      minMessage = "La valeur minimum est de 1 jour",
+     *      maxMessage = "La valeur maximum est de 100 jours",
+     *      invalidMessage = "Entrez un nombre entier, entre 1 et 100",
+     * )
      */
     private $nbJStee;
 
@@ -55,6 +82,11 @@ class Arome
      * @var string|null
      *
      * @ORM\Column(name="cat_aro", type="string", length=40, nullable=true, options={"fixed"=true})
+     * @Assert\Length(
+     *  min="3",
+     *  max="40",
+     *  minMessage ="Une catégorie doit comporter 3 caractères minimum",
+     *  maxMessage ="Une catégorie doit comporter 40 caractères maximum")
      */
     private $catAro;
 
@@ -62,6 +94,12 @@ class Arome
      * @var string|null
      *
      * @ORM\Column(name="aff_aro", type="string", length=3, nullable=true, options={"fixed"=true})
+     * @Assert\Regex("/(oui|non)/i")
+     * @Assert\Length(
+     *  min="3",
+     *  max="3",
+     *  minMessage ="Seuls les mots oui ou non sont acceptés",
+     *  maxMessage ="Seuls les mots oui ou non sont acceptés")
      */
     private $affAro;
 
@@ -187,5 +225,4 @@ class Arome
     {
         return strval($this->idAro);
     }
-
 }
