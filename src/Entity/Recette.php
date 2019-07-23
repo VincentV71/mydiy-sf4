@@ -84,7 +84,7 @@ class Recette
      *
      * @ORM\Column(name="etoiles", type="integer", nullable=false)
      */
-    private $etoiles = '0';
+    private $etoiles;
 
     /**
      * @var \Member
@@ -284,5 +284,8 @@ class Recette
         return $this;
     }
 
-
+    public function __toString()
+    {
+        return strval($this->idRecet);
+    }
 }

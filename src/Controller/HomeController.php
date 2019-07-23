@@ -3,10 +3,17 @@
 namespace App\Controller;
 
 use App\Entity\Arome;
+use App\Entity\Member;
+use App\Entity\Recette;
+use App\Form\MemberType;
+use App\Form\NewDiyType;
+use App\Repository\BaseRepository;
 use App\Repository\AromeRepository;
+use Symfony\Component\HttpFoundation\Request;
 use Doctrine\Common\Persistence\ObjectManager;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
 class HomeController extends AbstractController
 {
@@ -21,7 +28,7 @@ class HomeController extends AbstractController
     }
 
     /**
-     * @Route("/connection", name="login")
+     * @Route("/connexion", name="login")
      */
     public function connectUser()
     {
@@ -29,6 +36,14 @@ class HomeController extends AbstractController
             'controller_name' => 'HomeController',
         ]);
     }
+
+    /**
+     * @Route("/deconnexion", name="logout")
+     */
+    public function logout()
+    {
+    }
+
     // public function connectUser(ObjectManager $manager, AromeRepository $repo)
     // {
     //     // $myArome = new Arome ;
@@ -44,11 +59,39 @@ class HomeController extends AbstractController
     /**
      * @Route("/inscription", name="register")
      */
-    public function registerUser()
+    public function registerUser(Request $request, ObjectManager $manager, UserPasswordEncoderInterface $encoder)
     {
+        $myMember = new Member();
+
+        $memberForm = $this->createForm(MemberType::class, $myMember);
+
+        $memberForm->handleRequest($request);
+
+        if ($memberForm->isSubmitted() && $memberForm->isValid()) {
+            $myMember->setAffMember("oui");
+            
+            $hash = $encoder->encodePassword($myMember, $myMember->getPassword());
+            $myMember->setPassword($hash);
+
+            $manager->persist($myMember);
+            $manager->flush();
+
+            $this->addFlash(
+                'info',
+                'Vous êtes maintenant enregistré'
+            );
+
+            return $this->redirectToRoute('login');
+        }
+
         return $this->render('home/inscription.html.twig', [
             'controller_name' => 'HomeController',
+            'form_register' => $memberForm->createView()
         ]);
+
+        // return $this->render('home/inscription.html.twig', [
+        //     'controller_name' => 'HomeController',
+        // ]);
     }
 
     /**
@@ -64,10 +107,30 @@ class HomeController extends AbstractController
     /**
      * @Route("/new_diy", name="newdiy")
      */
-    public function makeNewDiy()
+    public function makeNewDiy(Request $request, ObjectManager $manager, AromeRepository $repo, BaseRepository $repoBase)
     {
+        $maRecette = new Recette();
+        // $maRecette->setEtoiles(0);
+
+        $newDiyForm = $this->createForm(NewDiyType::class, $maRecette);
+
+        $listeAromes = $repo->findAll();
+        
+        $listeBases = $repoBase->findAll();
+
+        $newDiyForm->handleRequest($request);
+
         return $this->render('home/new_diy.html.twig', [
             'controller_name' => 'HomeController',
+            'form_newdiy' => $newDiyForm->createView(),
+            'listeAromes' => $listeAromes,
+            'listeBases' => $listeBases,
+            'test' => 12,
+            'original_new_diy_form' => $newDiyForm
         ]);
+
+        // return $this->render('home/new_diy.html.twig', [
+        //     'controller_name' => 'HomeController',
+        // ]);
     }
 }
