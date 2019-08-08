@@ -113,6 +113,6 @@ class Base
 
     public function __toString()
     {
-        return strval($this->idBase);
+        return strval($this->dosPg)." / ".strval($this->dosVg);
     }
 }

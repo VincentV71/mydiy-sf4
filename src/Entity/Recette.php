@@ -36,7 +36,8 @@ class Recette
      *
      * @ORM\Column(name="qte_aro", type="decimal", precision=4, scale=1, nullable=false)
      * @Assert\NotBlank
-     * @Assert\Regex("/[0-9]+[0-9]*(\.|\,)?[0-9]?$/")
+     * @Assert\Regex("/^[0-9]{0,3}((\.\d)?|(\,\d)?)$/",
+     *    message="Entrez un nombre entier ou à une décimale, entre 0.1 et 500")
      * @Assert\Range(
      *    min = 0.1,
      *    max = 500,
@@ -52,7 +53,8 @@ class Recette
      *
      * @ORM\Column(name="qte_bas", type="decimal", precision=4, scale=1, nullable=false)
      * @Assert\NotBlank
-     * @Assert\Regex("/[0-9]+[0-9]*(\.|\,)?[0-9]?$/")
+     * @Assert\Regex("/^[0-9]{0,3}((\.\d)?|(\,\d)?)$/",
+     *    message="Entrez un nombre entier ou à une décimale, entre 2.5 et 990")
      * @Assert\Range(
      *    min = 2.5,
      *    max = 990,
@@ -91,8 +93,8 @@ class Recette
      * @ORM\Column(name="eta_stee", type="string", length=5, nullable=false, options={"fixed"=true})
      * @Assert\Regex("/(STEEP|PRETE|FINIE)/")
      * @Assert\Length(
-     *  min="5",
-     *  max="5",
+     *  min=5,
+     *  max=5,
      *  minMessage ="Seuls les mots STEEP, PRETE ou FINIE sont acceptés",
      *  maxMessage ="Seuls les mots STEEP, PRETE ou FINIE sont acceptés")
      */
@@ -103,8 +105,8 @@ class Recette
      *
      * @ORM\Column(name="com_member", type="text", length=0, nullable=true)
      * @Assert\Length(
-     *  min="3",
-     *  max="70",
+     *  min=3,
+     *  max=70,
      *  minMessage="Votre commentaire doit comporter 3 caractères minimum",
      *  maxMessage="Votre commentaire doit comporter 70 caractères maximum")
      */
@@ -116,8 +118,8 @@ class Recette
      * @ORM\Column(name="aff_recet", type="string", length=3, nullable=true, options={"fixed"=true})
      * @Assert\Regex("/(oui|non)/i")
      * @Assert\Length(
-     *  min="3",
-     *  max="3",
+     *  min=3,
+     *  max=3,
      *  minMessage ="Seuls les mots oui ou non sont acceptés",
      *  maxMessage ="Seuls les mots oui ou non sont acceptés")
      */
@@ -129,8 +131,8 @@ class Recette
      * @ORM\Column(name="etoiles", type="integer", nullable=true)
      * @Assert\Type(type="integer")
      * @Assert\Range(
-     *      min = 0,
-     *      max = 5,
+     *      min=0,
+     *      max=5,
      *      minMessage = "La note minimum est de 0",
      *      maxMessage = "La note maximum est de 5",
      *      invalidMessage = "Entrez un nombre entier, entre 0 et 5",
@@ -159,7 +161,8 @@ class Recette
     private $idBase;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\AromeRecette", mappedBy="idRecet", orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="App\Entity\AromeRecette", mappedBy="idRecet", orphanRemoval=true, cascade={"all"})
+     * @Assert\Valid
      */
     private $aromeRecettes;
 

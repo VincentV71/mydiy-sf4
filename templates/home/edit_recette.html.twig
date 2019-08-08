@@ -1,0 +1,168 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    Modifier une recette
+{% endblock %}
+
+{% block body %}
+
+    <div class="container">
+        {{ form_start(recetteForm) }}
+        {{ form_errors(recetteForm) }}
+
+        <div class="row mt-3 pl-3">
+            <medium class="text mr-5 mb-2">Modifiez votre recette :
+            </medium>
+            <br>
+        </div>
+        <hr>
+        <div class="col-xs-12 col-sm-6 col-md-6 col-lg-4 col-xl-3 mb-3 ">
+            <div class="card pt-1 {{ recetteForm.etaStee.vars.data }}">
+                <div class="cartouche">
+                    <strong>
+                        {{ recetteForm.etaStee.vars.data }}
+                    </strong>
+                    <h3 class="mt-3 text-uppercase">
+                        <strong>{{ paramRecette[0].nomAro }}</strong>
+                    </h3>
+                    <h5 class="text-uppercase">
+                        <em>{{ paramRecette[0].fabAro }}</em>
+                    </h5>
+                    <p class="pb-2">
+                        <strong>
+                            {{ recetteForm.aromeRecettes.0.dosAro.vars.data|number_format(1, ',')|replace({',0': ""})}}
+                            %</strong>
+                    </p>
+                </div>
+
+                <div class="card-block">
+                    <p>
+                        <em>{{ recetteForm.comMember.vars.data }}</em>
+                    </p>
+                    <div class="badge badge-pill badge-default mb-1 pt-1">Base
+                        {{ paramRecette[0].dosPg }}
+                        /
+                        {{ paramRecette[0].dosVg }}
+                    </div>
+                    <span class="badge badge-pill badge-default">
+                        {{ recetteForm.qteBas.vars.data|number_format(1, ',')|replace({',0': ""})}}
+                        ml (base) +
+                        {{ recetteForm.qteAro.vars.data|number_format(1, ',')|replace({',0': ""})}}
+                        ml (arôme)</span>
+                    <span class="badge badge-pill badge-default mb-3">Qté totale :
+                        {{ recetteForm.qteTot.vars.data }}
+                        ml</span>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item">
+                            <span>
+                                {% if recetteForm.etoiles.vars.data > 0 %}
+                                    {% for item in 1..recetteForm.etoiles.vars.data %}
+                                        <img height="28" src="{{ asset('static/img/star_36px.png') }}" width="28">
+                                    {% endfor %}
+                                    {% for item in 1..(5-recetteForm.etoiles.vars.data) if recetteForm.etoiles.vars.data < 5 %}
+                                        <img height="28" src="{{ asset('static/img/star_outline_36px.png') }}" width="28">
+                                    {% endfor %}
+                                {% else %}
+                                    {% for item in 1..5 %}
+                                        <img height="28" src="{{ asset('static/img/star_outline_36px.png') }}" width="28">
+                                    {% endfor %}
+                                {% endif %}
+                            </span>
+                        </li>
+                        <li class="list-group-item">Date création :
+                            {{ recetteForm.datRecet.vars.data|date("d/m/Y") }}
+                        </li>
+                        <li class="list-group-item">Steep estim. :
+                            {{ recetteForm.datStee.vars.data|date("d/m/Y") }}
+                        </li>
+                    </ul>
+                    {# DropUp menu PRIMAIRE #}
+                    <div class="dropup mt-3">
+                        <button aria-expanded="false" aria-haspopup="true" class="btn btn-secondary dropdown-toggle w-100" data-toggle="dropdown" id="dropdownMenu2" type="button">
+                            Modifier
+                        </button>
+                        <div aria-labelledby="dropdownMenu2" class="dropdown-menu">
+                            <button aria-controls="deplieEtoiles" aria-expanded="false" class="dropdown-item" data-target="#deplieEtoiles" data-toggle="collapse" type="button">Noter</button>
+
+                            <button aria-controls="deplieCommentaires" aria-expanded="false" class="dropdown-item" data-target="#deplieCommentaires" data-toggle="collapse" type="button">Commenter</button>
+
+                            <button aria-controls="deplieSteep" aria-expanded="false" class="dropdown-item" data-target="#deplieSteep" data-toggle="collapse" type="button">Modifier l'état du
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    steep</button>
+
+                            <button aria-controls="deplieSupprimer" aria-expanded="false" class="dropdown-item" data-target="#deplieSupprimer" data-toggle="collapse" type="button">
+                                {% if recetteForm.affRecet.vars.data == "oui" %}
+                                    Désactiver
+                                {% else %}
+                                    Activer
+                                {% endif %}
+                            </button>
+                        </div>
+                    </div>
+                    {# fin du Dropdown menu PRIMAIRE #}
+                    <div>
+                        {{ form_errors(recetteForm.etoiles) }}
+                        {{ form_errors(recetteForm.etaStee) }}
+                        {{ form_errors(recetteForm.affRecet) }}
+                        {{ form_errors(recetteForm.comMember) }}
+                    </div>
+
+                    {# SHOW/HIDDEN > ETOILES #}
+                    <div class="collapse mt-2" id="deplieEtoiles">
+                        <div class="row">
+                            {{ form_widget(recetteForm.etoiles) }}
+                            <input type="submit"/>
+                            <button aria-controls="deplieEtoiles" aria-expanded="false" class="btn btn-secondary btn-md mt-2" data-target="#deplieEtoiles" data-toggle="collapse" type="button">X</button>
+                        </div>
+                    </div>
+
+                    {# SHOW/HIDDEN > COMMENTAIRES #}
+                    <div class="collapse mt-2" id="deplieCommentaires">
+                        <div class="row">
+                            <label for="comMember">
+                                Entrez votre commentaire :</label>
+                            {{ form_widget(recetteForm.comMember) }}
+                            <input type="submit"/>
+                            <button aria-controls="deplieCommentaires" aria-expanded="false" class="btn btn-secondary btn-md mt-2" data-target="#deplieCommentaires" data-toggle="collapse" type="button">X</button>
+                        </div>
+                    </div>
+
+                    {# SHOW/HIDDEN > STEEP#}
+                    <div class="collapse mt-2" id="deplieSteep">
+                        <div class="row">
+                            <label for="etaStee">Actualisez le Steep :</label>
+                            {{ form_widget(recetteForm.etaStee) }}
+                            <input type="submit"/>
+                            <button aria-controls="deplieSteep" aria-expanded="false" class="btn btn-secondary btn-md mt-2" data-target="#deplieSteep" data-toggle="collapse" type="button">X</button>
+                        </div>
+                    </div>
+
+                    {# SHOW/HIDDEN > SUPPRIMER #}
+                    <div class="collapse mt-2" id="deplieSupprimer">
+                        <div class="row">
+                            <label for="affRecet"></label>
+                            {{ form_widget(recetteForm.affRecet) }}
+                            <input type="submit" value="Confirmer"/>
+                            <button aria-controls="deplieSupprimer" aria-expanded="false" class="btn btn-secondary btn-md mt-2" data-target="#deplieSupprimer" data-toggle="collapse" type="button">X</button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <div style="display: none;">
+            {{ form_row(recetteForm._token) }}
+            {{ form_row(recetteForm.datRecet) }}
+            {{ form_row(recetteForm.qteAro) }}
+            {{ form_row(recetteForm.qteBas) }}
+            {{ form_row(recetteForm.qteTot) }}
+            {{ form_row(recetteForm.datStee) }}
+            {{ form_row(recetteForm.idMember) }}
+            {{ form_row(recetteForm.idBase) }}
+            {{ form_row(recetteForm.aromeRecettes.0.dosAro) }}
+            {{ form_row(recetteForm.aromeRecettes.0.idRecet) }}
+            {{ form_row(recetteForm.aromeRecettes.0.idAro) }}
+        </div>
+        {{ form_end(recetteForm, {'render_rest': false}) }}
+    </div>
+</div>{% endblock %}

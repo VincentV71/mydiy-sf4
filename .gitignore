@@ -16,3 +16,12 @@
 ###> symfony/web-server-bundle ###
 /.web-server-pid
 ###< symfony/web-server-bundle ###
+
+###> templates (in progress) ###
+mes_recettes_IN-PROGRESS.html.twig
+new_diy_IN-PROGRESS.html.twig
+###<  templates (in progress) ###
+
+###> Form ###
+RecetteOldType.php
+###<  Form ###

@@ -1,0 +1,428 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    Mes recettes
+{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <div class="row mt-3 pl-3">
+            <medium class="text mr-5 mb-2">Bienvenue
+                <strong>{{app.user.username}}</strong>, vous avez
+                <strong>{{recettes|length}}</strong>
+                recettes
+                {% if recettes[0][0].affRecet == 'oui' %}
+                    actives.
+                {% elseif recettes[0][0].affRecet == 'oui' %}
+                    inactives.
+                {% endif %}
+            </medium>
+            <br>
+            {#  REACTIVER une RECETTE  #}
+            {# Bouton Réactiver une recette  #}
+                <div class="justify-content-end"> <form action="" method="POST">
+                    <input class="btn btn-secondary btn-sm " name="reveil_recette" type="submit" value="REACTIVER UNE RECETTE"/>
+                </form>
+            </div>
+        </div>
+        <hr>
+        {#  message d'erreur  #}
+
+        {# TRI #}
+            <div class="row mt-3 pl-3"> <div class="justify-content-start">
+                <form action="" method="POST">
+                    <label for="tri_recette">Trier les recettes par :</label>
+                    <select name="tri_recette">
+                        <option value="DAT_RECET ASC">date de création (croissante)</option>
+                        <option value="DAT_RECET DESC">date de création (décroissante)</option>
+                        <option value="DAT_STEE ASC">date de steep (croissante)</option>
+                        <option value="DAT_STEE DESC">date de steep (décroissante)</option>
+                        <option value="NOM_ARO">arôme</option>
+                        <option value="FAB_ARO">fabricant</option>
+                        <option value="ETA_STEE">état du steep</option>
+                        <option value="ETOILES DESC">notation étoiles</option>
+                        <option value="DOS_ARO">dosage</option>
+                        <option value="BASE.ID_BASE">type de base</option>
+                    </select>
+                    <input class="btn btn-secondary btn-sm" type="submit" value="Afficher"/>
+                </form>
+            </div>
+        </div>
+        <hr>
+        {# {{ dump(recettes) }}#}
+        {#  AFFICHAGE des Recettes #}
+            <div class="container-fluid p-0"> <div
+                class="row">
+                {#  Début du FETCH #}
+                {% for recette in recettes %}
+                    <div class="col-xs-12 col-sm-6 col-md-6 col-lg-4 col-xl-3 mb-3 ">
+                        <div class="card pt-1 {{ recette[0].etaStee }}">
+                            <div class="cartouche">
+                                <strong>
+                                    {{ recette[0].etaStee }}
+                                </strong>
+                                <h3 class="mt-3 text-uppercase">
+                                    <strong>{{ recette.nomAro }}</strong>
+                                </h3>
+                                <h5 class="text-uppercase">
+                                    <em>{{ recette.fabAro }}</em>
+                                </h5>
+                                <p class="pb-2">
+                                    <strong>
+                                        {{ recette.dosAro|number_format(1, ',')|replace({',0': ""})}}
+                                        %</strong>
+                                </p>
+                            </div>
+
+                            <div class="card-block">
+                                <p>
+                                    <em>{{ recette[0].comMember }}</em>
+                                </p>
+                                <div class="badge badge-pill badge-default mb-1 pt-1">Base
+                                    {{ recette.dosPg }}
+                                    /
+                                    {{ recette.dosVg }}
+                                </div>
+                                <span class="badge badge-pill badge-default">
+                                    {{ recette[0].qteBas|number_format(1, ',')|replace({',0': ""})}}
+                                    ml (base) +
+                                    {{ recette[0].qteAro|number_format(1, ',')|replace({',0': ""})}}
+                                    ml (arôme)</span>
+                                <span class="badge badge-pill badge-default mb-3">Qté totale :
+                                    {{ recette[0].qteTot }}
+                                    ml</span>
+                                <ul class="list-group list-group-flush">
+                                    <li class="list-group-item">
+                                        <span>
+                                            {% if recette[0].etoiles > 0 %}
+                                                {% for item in 1..recette[0].etoiles %}
+                                                    <img height="28" src="static/img/star_36px.png" width="28">
+                                                {% endfor %}
+                                                {% for item in 1..(5-recette[0].etoiles) %}
+                                                    <img height="28" src="static/img/star_outline_36px.png" width="28">
+                                                {% endfor %}
+                                            {% else %}
+                                                {% for item in 1..5 %}
+                                                    <img height="28" src="static/img/star_outline_36px.png" width="28">
+                                                {% endfor %}
+                                            {% endif %}
+                                        </span>
+                                    </li>
+                                    <li class="list-group-item">Date création :
+                                        {{ recette[0].datRecet|date("d/m/Y") }}
+                                    </li>
+                                    <li class="list-group-item">Steep estim. :
+                                        {{ recette[0].datStee|date("d/m/Y") }}
+                                    </li>
+                                </ul>
+                                {# DropUp menu PRIMAIRE #}
+                                <div class="dropup mt-3">
+                                    <button aria-expanded="false" aria-haspopup="true" class="btn btn-secondary dropdown-toggle w-100" data-toggle="dropdown" id="dropdownMenu2" type="button">
+                                        Modifier
+                                    </button>
+                                    <div aria-labelledby="dropdownMenu2" class="dropdown-menu">
+                                        <button aria-controls="deplieEtoiles{{ recette[0].idRecet }}" aria-expanded="false" class="dropdown-item" data-target="#deplieEtoiles{{ recette[0].idRecet }}" data-toggle="collapse" type="button">Noter</button>
+
+                                        <button aria-controls="deplieCommentaires{{ recette[0].idRecet }}" aria-expanded="false" class="dropdown-item" data-target="#deplieCommentaires{{ recette[0].idRecet }}" data-toggle="collapse" type="button">Commenter</button>
+
+                                        <button aria-controls="deplieSteep{{ recette[0].idRecet }}" aria-expanded="false" class="dropdown-item" data-target="#deplieSteep{{ recette[0].idRecet }}" data-toggle="collapse" type="button">Modifier l'état du steep</button>
+
+                                        <button aria-controls="deplieSupprimer{{ recette[0].idRecet }}" aria-expanded="false" class="dropdown-item" data-target="#deplieSupprimer{{ recette[0].idRecet }}" data-toggle="collapse" type="button">Supprimer</button>
+                                    </div>
+                                </div>
+                                {# fin du Dropdown menu PRIMAIRE#}
+
+                                {# SHOW/HIDDEN pour les ETOILES#}
+                                <div class="collapse mt-2" id="deplieEtoiles{{ recette[0].idRecet }}">
+                                    <div class="row">
+                                        <form
+                                            action="" method="POST">
+                                            {#  Bouton HIDDEN : récupération du N° de la recette #}
+                                            <input
+                                            name="ID_RECET" type="hidden" value="{{ recette[0].idRecet }}">
+                                            {#  Nouvelle Notation : ETOILES; (A faire en SHOW/HIDE) #}
+                                            <label for="ETOILES">Entrez votre note (de 0 à 5) :</label>
+                                            <select name="ETOILES">
+                                                <option>0</option>
+                                                <option>1</option>
+                                                <option>2</option>
+                                                <option>3</option>
+                                                <option>4</option>
+                                                <option>5</option>
+                                            </select>
+                                            <input type="submit"/>
+                                        </form>
+                                        <button aria-controls="deplieEtoiles{{ recette[0].idRecet }}" aria-expanded="false" class="btn btn-secondary btn-md mt-2" data-target="#deplieEtoiles{{ recette[0].idRecet }}" data-toggle="collapse" type="button">X</button>
+                                    </div>
+                                </div>
+                                {# FIN du SHOW/HIDDEN pour les ETOILES#}
+
+                                {# SHOW/HIDDEN pour les COMMENTAIRES#}
+                                <div class="collapse mt-2" id="deplieCommentaires{{ recette[0].idRecet }}">
+                                    <div class="row">
+                                        <form
+                                            action="" method="POST">
+                                            {#  Bouton HIDDEN : récupération du N° de la recette #}
+                                            <input
+                                            name="ID_RECET" type="hidden" value="{{ recette[0].idRecet }}">
+                                            {# Nouveau COMMENTAIRE : COM_USER; (A faire en SHOW/HIDE) #}
+                                            <label for="COM_USER">Entrez votre commentaire :</label>
+                                            <textarea class="w-95 mr-1 ml-1" maxlength="70" name="COM_USER" placeholder="(70 caractères maximum)" type="texte" value=""></textarea>
+                                            <input type="submit"/>
+                                        </form>
+                                        <button aria-controls="deplieCommentaires{{ recette[0].idRecet }}" aria-expanded="false" class="btn btn-secondary btn-md mt-2" data-target="#deplieCommentaires{{ recette[0].idRecet }}" data-toggle="collapse" type="button">X</button>
+                                    </div>
+                                </div>
+                                {# FIN du SHOW/HIDDEN pour les COMMENTAIRES#}
+
+                                {# SHOW/HIDDEN pour le STEEP#}
+                                <div class="collapse mt-2" id="deplieSteep{{ recette[0].idRecet }}">
+                                    <div class="row">
+                                        <form
+                                            action="" method="POST">
+                                            {#  Bouton HIDDEN : récupération du N° de la recette #}
+                                            <input
+                                            name="ID_RECET" type="hidden" value="{{ recette[0].idRecet }}">
+                                            {# Nouveau STEEP : ETOILES; (A faire en SHOW/HIDE) #}
+                                            <label for="ETA_STEE">Actualisez le Steep :</label>
+                                            <select name="ETA_STEE">
+                                                <option>STEEP</option>
+                                                <option>PRETE</option>
+                                                <option>FINIE</option>
+                                            </select>
+                                            <input type="submit"/>
+                                        </form>
+                                        <button aria-controls="deplieSteep{{ recette[0].idRecet }}" aria-expanded="false" class="btn btn-secondary btn-md mt-2" data-target="#deplieSteep{{ recette[0].idRecet }}" data-toggle="collapse" type="button">X</button>
+                                    </div>
+                                </div>
+                                {# FIN du SHOW/HIDDEN pour le STEEP#}
+
+                                {# SHOW/HIDDEN pour SUPPRIMER#}
+                                <div class="collapse mt-2" id="deplieSupprimer{{ recette[0].idRecet }}">
+                                    <div class="row">
+                                        <form
+                                            action="" method="POST">
+                                            {#  Bouton HIDDEN : récupération du N° de la recette #}
+                                            <input
+                                            name="idRecet" type="hidden" value="{{ recette[0].idRecet }}">
+                                            {# Nouveau STEEP : ETOILES; (A faire en SHOW/HIDE) #}
+                                            <label for="affRecet">Rendre cette recette inactive ?</label>
+                                            <select name="affRecet">
+                                                <option value="non">Oui</option>
+                                                <option value="oui">Non</option>
+                                            </select>
+                                            <input type="submit" value="Confirmer"/>
+                                        </form>
+                                        <button aria-controls="deplieSupprimer{{ recette[0].idRecet }}" aria-expanded="false" class="btn btn-secondary btn-md mt-2" data-target="#deplieSupprimer{{ recette[0].idRecet }}" data-toggle="collapse" type="button">X</button>
+                                    </div>
+                                </div>
+                                {# FIN du SHOW/HIDDEN SUPPRIMER#}
+                            </div>
+                        </div>
+                        {# fin DIV CARD #}
+                    </div>
+                {% endfor %}
+            </div>
+            {# fin DIV ROW #}
+        </div>
+        {# fin DIV CONTAINER FLUID P-0 #}
+    </div>
+    {# fin DIV CONTAINER principal #}
+
+
+{% endblock %}
+
+
+/**
+* @Route("/mes_recettes/{id}", name="edit_recette")
+* @IsGranted("ROLE_USER")
+*/
+public function editRecetteMember(Request $request, Recette $recette)
+{
+$paramRecette[]= $request->query->all();
+dump($paramRecette);
+
+
+return $this->render('home/edit_recette.html.twig', [
+'controller_name' => 'HomeController',
+'recette' => $recette,
+'paramRecette'=> $paramRecette
+]);
+}
+
+
+===================== LUNDI 29 JUILLET (un Form pour modifier une recette) :
+
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    Modifier une recette
+{% endblock %}
+
+{% block body %}
+    <div class="container">
+        {{ form_start(recetteForm) }}
+        {{ form_errors(recetteForm) }}
+
+        <div class="row mt-3 pl-3">
+            <medium class="text mr-5 mb-2">Modifiez votre recette :
+            </medium>
+            <br>
+        </div>
+        <hr>
+        <div class="col-xs-12 col-sm-6 col-md-6 col-lg-4 col-xl-3 mb-3 ">
+            <div class="card pt-1 {{ recetteForm.etaStee.vars.data }}">
+                <div class="cartouche">
+                    <strong>
+                        {{ recetteForm.etaStee.vars.data }}
+                    </strong>
+                    <h3 class="mt-3 text-uppercase">
+                        <strong>{{ paramRecette[0].nomAro }}</strong>
+                    </h3>
+                    <h5 class="text-uppercase">
+                        <em>{{ paramRecette[0].fabAro }}</em>
+                    </h5>
+                    <p class="pb-2">
+                        <strong>
+                            {# {{ paramRecette[0].dosAro|number_format(1, ',')|replace({',0': ""})}} #}
+                            {{ recetteForm.aromeRecettes.0.dosAro.vars.data|number_format(1, ',')|replace({',0': ""})}}
+                            %</strong>
+                    </p>
+                </div>
+
+                <div class="card-block">
+                    <p>
+                        <em>{{ recetteForm.comMember.vars.data }}</em>
+                    </p>
+                    <div class="badge badge-pill badge-default mb-1 pt-1">Base
+                        {{ paramRecette[0].dosPg }}
+                        /
+                        {{ paramRecette[0].dosVg }}
+                    </div>
+                    <span class="badge badge-pill badge-default">
+                        {{ recetteForm.qteBas.vars.data|number_format(1, ',')|replace({',0': ""})}}
+                        ml (base) +
+                        {{ recetteForm.qteAro.vars.data|number_format(1, ',')|replace({',0': ""})}}
+                        ml (arôme)</span>
+                    <span class="badge badge-pill badge-default mb-3">Qté totale :
+                        {{ recetteForm.qteTot.vars.data }}
+                        ml</span>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item">
+                            <span>
+                                {% if recetteForm.etoiles.vars.data > 0 %}
+                                    {% for item in 1..recetteForm.etoiles.vars.data %}
+                                        <img height="28" src="{{ asset('static/img/star_36px.png') }}" width="28">
+                                    {% endfor %}
+                                    {% for item in 1..(5-recetteForm.etoiles.vars.data) %}
+                                        <img height="28" src="{{ asset('static/img/star_outline_36px.png') }}" width="28">
+                                    {% endfor %}
+                                {% else %}
+                                    {% for item in 1..5 %}
+                                        <img height="28" src="{{ asset('static/img/star_outline_36px.png') }}" width="28">
+                                    {% endfor %}
+                                {% endif %}
+                            </span>
+                        </li>
+                        <li class="list-group-item">Date création :
+                            {{ recetteForm.datRecet.vars.data|date("d/m/Y") }}
+                        </li>
+                        <li class="list-group-item">Steep estim. :
+                            {{ recetteForm.datStee.vars.data|date("d/m/Y") }}
+                        </li>
+                    </ul>
+                    {# DropUp menu PRIMAIRE #}
+                    <div class="dropup mt-3">
+                        <button aria-expanded="false" aria-haspopup="true" class="btn btn-secondary dropdown-toggle w-100" data-toggle="dropdown" id="dropdownMenu2" type="button">
+                            Modifier
+                        </button>
+                        <div aria-labelledby="dropdownMenu2" class="dropdown-menu">
+                            <button aria-controls="deplieEtoiles" aria-expanded="false" class="dropdown-item" data-target="#deplieEtoiles" data-toggle="collapse" type="button">Noter</button>
+
+                            <button aria-controls="deplieCommentaires" aria-expanded="false" class="dropdown-item" data-target="#deplieCommentaires" data-toggle="collapse" type="button">Commenter</button>
+
+                            <button aria-controls="deplieSteep" aria-expanded="false" class="dropdown-item" data-target="#deplieSteep" data-toggle="collapse" type="button">Modifier l'état du
+                                                                steep</button>
+
+                            <button aria-controls="deplieSupprimer" aria-expanded="false" class="dropdown-item" data-target="#deplieSupprimer" data-toggle="collapse" type="button">Supprimer</button>
+                        </div>
+                    </div>
+                    {# fin du Dropdown menu PRIMAIRE#}
+                    <div>
+                        {{ form_errors(recetteForm.etoiles) }}
+                        {{ form_errors(recetteForm.etaStee) }}
+                        {{ form_errors(recetteForm.affRecet) }}
+                        {{ form_errors(recetteForm.comMember) }}
+                    </div>
+
+                    {# SHOW/HIDDEN pour les ETOILES#}
+                    <div class="collapse mt-2" id="deplieEtoiles">
+                        <div class="row">
+                            {{ form_widget(recetteForm.etoiles) }}
+                            <input type="submit"/>
+                            <button aria-controls="deplieEtoiles" aria-expanded="false" class="btn btn-secondary btn-md mt-2" data-target="#deplieEtoiles" data-toggle="collapse" type="button">X</button>
+                        </div>
+                    </div>
+                    {# FIN du SHOW/HIDDEN pour les ETOILES#}
+
+                    {# SHOW/HIDDEN pour les COMMENTAIRES#}
+                    <div class="collapse mt-2" id="deplieCommentaires">
+                        <div class="row">
+                            <label for="comMember">
+                                Entrez votre commentaire :</label>
+                            {{ form_widget(recetteForm.comMember) }}
+                            <input type="submit"/>
+                            <button aria-controls="deplieCommentaires" aria-expanded="false" class="btn btn-secondary btn-md mt-2" data-target="#deplieCommentaires" data-toggle="collapse" type="button">X</button>
+                        </div>
+                    </div>
+                    {# FIN du SHOW/HIDDEN pour les COMMENTAIRES#}
+
+                    {# SHOW/HIDDEN pour le STEEP#}
+                    <div class="collapse mt-2" id="deplieSteep">
+                        <div class="row">
+                            <label for="etaStee">Actualisez le Steep :</label>
+                            {{ form_widget(recetteForm.etaStee) }}
+                            <input type="submit"/>
+                            <button aria-controls="deplieSteep" aria-expanded="false" class="btn btn-secondary btn-md mt-2" data-target="#deplieSteep" data-toggle="collapse" type="button">X</button>
+                        </div>
+                    </div>
+                    {# FIN du SHOW/HIDDEN pour le STEEP#}
+
+                    {# SHOW/HIDDEN pour SUPPRIMER#}
+                    <div class="collapse mt-2" id="deplieSupprimer">
+                        <div class="row">
+                            <label for="affRecet">
+                                Rendre cette recette inactive ?</label>
+                            {{ form_widget(recetteForm.affRecet) }}
+                            <input type="submit" value="Confirmer"/>
+                            <button aria-controls="deplieSupprimer" aria-expanded="false" class="btn btn-secondary btn-md mt-2" data-target="#deplieSupprimer" data-toggle="collapse" type="button">X</button>
+                        </div>
+                    </div>
+                    {# FIN du SHOW/HIDDEN SUPPRIMER#}
+
+                </div>
+            </div>
+        </div>
+
+        <div style="display: none;">
+            {{ form_row(recetteForm._token) }}
+            {{ form_row(recetteForm.datRecet) }}
+            {{ form_row(recetteForm.qteAro) }}
+            {{ form_row(recetteForm.qteBas) }}
+            {{ form_row(recetteForm.qteTot) }}
+            {{ form_row(recetteForm.datStee) }}
+            {{ form_row(recetteForm.idMember) }}
+            {{ form_row(recetteForm.idBase) }}
+            {{ form_row(recetteForm.aromeRecettes.0.dosAro) }}
+            {{ form_row(recetteForm.aromeRecettes.0.idRecet) }}
+            {{ form_row(recetteForm.aromeRecettes.0.idAro) }}
+
+        {# {{ form_row(recetteForm.etaStee) }}
+                                                                                                                                        {{ form_row(recetteForm.comMember) }}
+                                                                                                                                        {{ form_row(recetteForm.affRecet) }} #}
+            {# {{ form_row(recetteForm.etoiles) }} #}
+        </div>
+        {{ form_end(recetteForm, {'render_rest': false}) }}
+    </div>
+
+{% endblock %}

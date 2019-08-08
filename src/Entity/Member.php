@@ -131,7 +131,7 @@ class Member implements UserInterface
 
     public function __toString()
     {
-        return strval($this->idMember);
+        return strval($this->mailMember);
     }
 
     /**
@@ -144,7 +144,6 @@ class Member implements UserInterface
     public function getSalt()
     {
     }
-
 
     /**
      * Returns the username used to authenticate the user.
@@ -172,7 +171,11 @@ class Member implements UserInterface
      */
     public function getRoles()
     {
-        return ['ROLE_USER'];
+        if ($this->idMember == 1) {
+            return ['ROLE_ADMIN', 'ROLE_USER'];
+        } else {
+            return ['ROLE_USER'];
+        }
     }
 
     /**

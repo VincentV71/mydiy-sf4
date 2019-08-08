@@ -223,6 +223,6 @@ class Arome
 
     public function __toString()
     {
-        return strval($this->idAro);
+        return strval($this->nomAro)." - ".strval($this->fabAro);
     }
 }

@@ -1,0 +1,186 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello HomeController!
+{% endblock %}
+
+{% block body %}
+
+    {# {{ form(form_newdiy) }} #}
+    {# mon commentaire #}
+    {# {{ form_widget(form_newdiy.aromeRecettes.0.dosAro, {'attr': {'placeholder': 'Votre choix'} } ) }} #}
+        <div class="container"> <div>
+            <h1>NEW DIY</h1>
+            {{ form_start(form_newdiy) }}
+            {{ form_errors(form_newdiy) }}
+
+            <div class="row justify-content-start spacer">
+                <div class="col-6">
+                    <label for="choix_arome">AROME :</label>
+                    <select class="form-control form-control-sm" id="choix_arome" name="choix_arome" type="text">
+                        {% for item in listeAromes %}
+                            <option value="{{item.idAro}}">{{item.nomAro}}
+                                -
+                                {{item.fabAro}}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+
+                <div class="col-6">
+                    <label for="choix_dosage">DOSAGE :</label>
+                    <div>
+                        {# {{ form_widget(form_newdiy.aromeRecettes.0.dosAro, {'attr': {'placeholder': 'Votre choix'} } ) }} #}
+                        <label for="choix_dosage">%</label>
+                    </div>
+                </div>
+            </div>
+            <hr class="spacer">
+
+
+            <div class="progress-box">
+                <div class="percentage-cur">
+                    <label for="choix_base">TYPE DE BASE :</label>
+                    <span class="num">
+                        {{listeBases.0.dosPg}}
+                        % PG /
+                        {{listeBases.0.dosVg}}
+                        % VG
+                    </span>
+                </div>
+
+                <div class="progress-bar progress-bar-slider">
+                    <input class="progress-slider" max="100" min="0" name="choix_base" step="10" type="range">
+                </input>
+                <div class="inner"></div>
+            </div>
+        </div>
+        <hr class="spacer" id="hr_spacer">
+
+
+        <div>
+            <label for="total_recette">QUANTITE TOTALE DESIREE :</label>
+            {{ form_widget(form_newdiy.qteTot) }}
+            ml
+        </div>
+        {% set Twigtest = 44 %}
+        <span>
+            <h1>{{ Twigtest + 200 }}</h1>
+        </span>
+
+        {% set fruits = ['apple', 'orange', 'citrus', 'quatrieme', 'cinquieme'] %}
+
+        {% for i in 0..5 %}
+            {{ cycle(fruits, i) }}
+        {% endfor %}
+
+        {{ dump(listeAromes.0.nbJStee) }}
+
+        {{ dump(listeAromes) }}
+
+        {{ dump(original_new_diy_form.data) }}
+
+        {{ dump(form_newdiy.vars.value) }}
+
+        {{ dump(form_newdiy.vars.attr) }}
+
+        {{ dump(form_newdiy.qteAro.vars.value) }}
+
+        {# keys: "value, attr, form, id, name, full_name, disabled, label,label_format, multipart, block_prefixes, unique_block_prefix,translation_domain, cache_key, errors, valid, data, required, size, label_attr, help, help_attr, compound, method, action, submitted" #}
+
+        {# {% set form_newdiy[qteTot] = 666 %} #}
+
+        <hr class="spacer"> <div id="rctContainer">
+            <div class="row" id="spacerRecet">
+                <div class="col-6 d-flex justify-content-center font-weight-light ">
+                    <div>
+                        <h1>{{ form_newdiy.qteBas.vars.value }}
+                        </h1>
+                    </div>
+
+                </div>
+                <div class="col-6 d-flex justify-content-center font-weight-light">
+                    <span>
+                        <h1>
+                            {{ form_newdiy.qteAro.vars.value }}</h1>
+                    </span>
+                </div>
+            </div>
+            <div class="row mt-1">
+                <div class="col-6 d-flex justify-content-center ">
+                    <div>ml de BASE</div>
+                </div>
+                <div class="col-6 d-flex justify-content-center ">
+                    <span>ml d'AROME</span>
+                </div>
+            </div>
+            <div class="row spacer mt-5">
+                <div class="col-6 d-flex justify-content-center font-weight-light">
+                    <div>
+                        <h1>{{ listeAromes.0.nbJStee }}</h1>
+                    </div>
+                </div>
+                <div class="col-6 d-flex justify-content-center font-weight-light">
+                    {# <span><h1>{{ form_newdiy.datStee.vars.value[day] }}</h1></span> #}
+                    {#  {{ dump(form_newdiy.datStee.vars.value) }} #}
+                        <span>
+                            <h1>
+                        {{ form_newdiy.datStee.vars.value['day'] }}
+                    </h1>
+                </span>
+            </div>
+            </div>
+                <div class="row mt-1 "> <div class="col-6 d-flex justify-content-center">
+                    <div>jours de Steep</div>
+                </div>
+                <div class="col-6 d-flex justify-content-center">
+                    <span>Date de fin de steep</span>
+                </div>
+            </div>
+        </div>
+
+        {# Inclusion de CSRF Token #}
+        {{ form_widget(form_newdiy._token) }}
+
+        <button class="btn btn-outline-primary btn-lg btn-block spacer" type="submit">Sauvegarder cette recette</button>
+
+        {{ form_end(form_newdiy, {'render_rest': false}) }}
+    </div>
+    <hr>
+</div>
+
+
+{#<div class="container">
+    {{ form_start(form_newdiy) }}
+    {{ form_row(form_newdiy) }}
+
+    <input type="submit" value="Confirmer" />
+    {{ form_end(form_newdiy) }}
+</div> #}
+
+
+<div class="container">
+    {{ form_start(form_newdiy) }}
+    {# {{ form_row(form_newdiy) }} #}
+    {# {% set form_newdiy.aromeRecettes.0.dosAro.vars.data = [45] %} #}
+        {{ form(form_newdiy) }}
+        {# <div id="form_newdiy_aromeRecettes"> <div id="form_newdiy_aromeRecettes_0">
+                        <div>
+                            <label for="form_newdiy[aromeRecettes][0][dosAro]">
+                                Dosage</label>
+                            <input id="form_newdiy_aromeRecettes_0_dosAro" name="form_newdiy[aromeRecettes][0][dosAro]" type="text" value=""/>
+                        </div>
+                        <div>
+                            <label for="form_newdiy[aromeRecettes][idAro][0]">
+                                Id Arome</label>
+                            <input id="form_newdiy_aromeRecettes_0_idAro" name="form_newdiy[aromeRecettes][0][idAro]" type="text" value=""/>
+                        </div>
+                        <div>
+                            <label for="form_newdiy[aromeRecettes][idRecet][0]">
+                                Id Recette</label>
+                            <input id="form_newdiy_aromeRecettes_0_idRecet" name="form_newdiy[aromeRecettes][0][idRecet]" type="text" value=""/>
+                        </div>
+                    </div>
+                </div> #}
+        <input type="submit"/> {{ form_end(form_newdiy) }}
+    </div>
+{% endblock %}

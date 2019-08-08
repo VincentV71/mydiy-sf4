@@ -19,22 +19,36 @@ class RecetteRepository extends ServiceEntityRepository
         parent::__construct($registry, Recette::class);
     }
 
-    // /**
-    //  * @return Recette[] Returns an array of Recette objects
-    //  */
-    /*
-    public function findByExampleField($value)
+    /**
+     * Get all the recettes for a member
+     * Return un array of arrays.
+     * Each array contains : One 'recette' object, plus 5 properties
+     *
+     * @param int $idMember
+     * @param string $status
+     * @param string $sort
+     * @param string $order
+     *
+     * @return array[]
+     */
+    public function getDataRecettesByMember($idMember, $status, $sort, $order)
     {
         return $this->createQueryBuilder('r')
-            ->andWhere('r.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('r.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
+        ->where('r.idMember = :idMember and r.affRecet = :status')
+        ->addSelect(array('b.dosVg', 'b.dosPg'))
+        ->innerJoin('r.idBase', 'b')
+        ->addSelect('ar.dosAro')
+        ->innerJoin('r.aromeRecettes', 'ar')
+        ->addSelect(array('a.fabAro', 'a.nomAro'))
+        ->innerJoin('ar.idAro', 'a')
+        ->setParameters(array('idMember' => $idMember,
+                            'status' => $status))
+        ->orderBy($sort, $order)
+        ->setMaxResults(100)
+        ->getQuery()
+        ->getResult()
         ;
     }
-    */
 
     /*
     public function findOneBySomeField($value): ?Recette
