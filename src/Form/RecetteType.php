@@ -22,11 +22,11 @@ class RecetteType extends AbstractType
         $builder
             ->add('datRecet')
             ->add('qteAro', NumberType::class, [
-                'invalid_message' => 'Une valeur numérique est obligatoire'
+                'invalid_message' => 'La quantité d\'arôme de la recette n\'est pas une valeur numérique.'
                 ])
             // ->add('qteAro', TextareaType::class, ['attr' => ['label' => 'Quantité d`\arôme de la recette'] ])
             ->add('qteBas', NumberType::class, [
-                'invalid_message' => 'Une valeur numérique est obligatoire'
+                'invalid_message' => 'La quantité de base de la recette n\'est pas une valeur numérique.'
                 ])
             ->add('qteTot', IntegerType::class)
             ->add('datStee')

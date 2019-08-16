@@ -36,9 +36,10 @@ class AromeRecette
 
     /**
      * @ORM\Column(type="decimal", precision=3, scale=1)
+     * @Assert\NotBlank(message = "Vous n'avez pas renseigné le dosage d'arôme de la recette")
      * @Assert\Regex(
      *  "/^[1-5]?[0-9]*(\.|\,)?[0-9]$/",
-     *  message = "La valeur {{ value }} n'est pas conforme"
+     *  message = "Le dosage d'arôme renseigné {{ value }} n'est pas conforme (un nombre entier ou à une décimale est attendu)"
      *  )
      * @Assert\Range(
      *      min = 1,

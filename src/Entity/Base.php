@@ -4,12 +4,14 @@ namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
+use App\Validator as MyDiyAssert;
 
 /**
  * Base
  *
  * @ORM\Table(name="base")
  * @ORM\Entity(repositoryClass="App\Repository\BaseRepository")
+ * @MyDiyAssert\BaseComposition
  */
 class Base
 {

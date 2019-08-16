@@ -158,13 +158,15 @@ class HomeController extends AbstractController
         $datas= $request->request->all();
         
         if ($newDiyForm->isSubmitted() && $newDiyForm->isValid()) {
+            dump($maRecette);
+
             $manager->persist($maRecette);
             $manager->flush();
             $this->addFlash(
                 'success',
                 'Votre nouvelle recette est désormais sauvegardée'
             );
-            return $this->redirectToRoute('mydiy');
+            // return $this->redirectToRoute('mydiy');
         }
  
         return $this->render('home/new_diy.html.twig', [

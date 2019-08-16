@@ -6,12 +6,16 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
+use App\Validator as MyDiyAssert;
 
 /**
  * Recette
  *
  * @ORM\Table(name="recette", indexes={@ORM\Index(name="FK_UTILISER", columns={"id_base"}), @ORM\Index(name="FK_CUISINER", columns={"id_member"})})
  * @ORM\Entity(repositoryClass="App\Repository\RecetteRepository")
+ * @MyDiyAssert\RecetteTotal
+ * @MyDiyAssert\RecetteSteep
+ * @MyDiyAssert\RecetteArome
  */
 class Recette
 {
@@ -25,11 +29,11 @@ class Recette
     private $idRecet;
 
     /**
-     * @var \DateTime|null
+     * @var \DateTime
      *
-     * @ORM\Column(name="dat_recet", type="date", nullable=true)
+     * @ORM\Column(name="dat_recet", type="date", nullable=false)
      */
-    private $datRecet;
+    private $datRecet ;
 
     /**
      * @var string
@@ -81,9 +85,9 @@ class Recette
     private $qteTot;
 
     /**
-     * @var \DateTime|null
+     * @var \DateTime
      *
-     * @ORM\Column(name="dat_stee", type="date", nullable=true)
+     * @ORM\Column(name="dat_stee", type="date", nullable=false)
      */
     private $datStee;
 
@@ -113,9 +117,9 @@ class Recette
     private $comMember;
 
     /**
-     * @var string|null
+     * @var string
      *
-     * @ORM\Column(name="aff_recet", type="string", length=3, nullable=true, options={"fixed"=true})
+     * @ORM\Column(name="aff_recet", type="string", length=3, nullable=false, options={"fixed"=true})
      * @Assert\Regex("/(oui|non)/i")
      * @Assert\Length(
      *  min=3,
@@ -123,12 +127,12 @@ class Recette
      *  minMessage ="Seuls les mots oui ou non sont acceptés",
      *  maxMessage ="Seuls les mots oui ou non sont acceptés")
      */
-    private $affRecet;
+    private $affRecet='oui';
 
     /**
-     * @var int|null
+     * @var int
      *
-     * @ORM\Column(name="etoiles", type="integer", nullable=true)
+     * @ORM\Column(name="etoiles", type="integer", nullable=false)
      * @Assert\Type(type="integer")
      * @Assert\Range(
      *      min=0,
@@ -138,7 +142,7 @@ class Recette
      *      invalidMessage = "Entrez un nombre entier, entre 0 et 5",
      * )
      */
-    private $etoiles;
+    private $etoiles=0;
 
     /**
      * @var \Member
@@ -169,6 +173,7 @@ class Recette
     public function __construct()
     {
         $this->aromeRecettes = new ArrayCollection();
+        $this->datRecet = new \DateTime();
     }
 
     public function getIdRecet(): ?int
