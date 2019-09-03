@@ -25,11 +25,18 @@ class RecetteSteepValidator extends ConstraintValidator
                                 ->getNbJStee();
         $datSteep = $recette->getDatStee();
 
+        if (null === $datRecette || '' === $datRecette
+            || null === $nbJoursSteep || '' === $nbJoursSteep
+            || null === $datSteep || '' === $datSteep) {
+            return;
+        }
+
         if ($datSteep != ($datRecette->modify('+'.$nbJoursSteep.' day'))) {
             $this->context->buildViolation($constraint->message)
                 ->setParameter('{{ value }}', $datSteep->format('d-m-Y'))
                 ->atPath('datSteep')
                 ->addViolation();
         }
+        $datRecette->modify('-'.$nbJoursSteep.' day');
     }
 }

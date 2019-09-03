@@ -19,32 +19,20 @@ class AromeRepository extends ServiceEntityRepository
         parent::__construct($registry, Arome::class);
     }
 
-    // /**
-    //  * @return Arome[] Returns an array of Arome objects
-    //  */
-    /*
-    public function findByExampleField($value)
+    /**
+     * Return json data from an array of Arome'Objects
+     *
+     */
+    public function arrayOfAromesToJson(array $aromeDatas)
     {
-        return $this->createQueryBuilder('a')
-            ->andWhere('a.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('a.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
+        $json_aromes = array();
+        foreach ($aromeDatas as $arome) {
+            $json_aromes[] = array(
+                'aro_id' => $arome->getIdAro(),
+                'aro_nb_steep' => $arome->getNbJStee(),
+                'aro_dos_fab' => $arome->getDosFab()
+            );
+        }
+        return json_encode($json_aromes);
     }
-    */
-
-    /*
-    public function findOneBySomeField($value): ?Arome
-    {
-        return $this->createQueryBuilder('a')
-            ->andWhere('a.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
-    }
-    */
 }

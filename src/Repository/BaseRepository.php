@@ -19,6 +19,23 @@ class BaseRepository extends ServiceEntityRepository
         parent::__construct($registry, Base::class);
     }
 
+    /**
+     * Return json data from an array of Base'Objects
+     *
+     */
+    public function arrayOfBasesToJson(array $baseDatas)
+    {
+        $json_bases = array();
+        foreach ($baseDatas as $base) {
+            $json_bases[] = array(
+                'base_id' => $base->getIdBase(),
+                'base_correctif' => $base->getCorrectif(),
+                'base_pg' => $base->getDosPg()
+            );
+        }
+        return json_encode($json_bases);
+    }
+
     // /**
     //  * @return Base[] Returns an array of Base objects
     //  */

@@ -174,6 +174,8 @@ class Recette
     {
         $this->aromeRecettes = new ArrayCollection();
         $this->datRecet = new \DateTime();
+        $this->etaStee = 'STEEP';
+        $this->comMember = 'Sans commentaires';
     }
 
     public function getIdRecet(): ?int

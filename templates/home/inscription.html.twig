@@ -5,70 +5,72 @@
 
 {% block body %}
 
-    <div class="jumbotron Jumbotron-fluid justify-content-center">
-        <div class="container">
-            <div class="form-group row">
-                <h1>INSCRIPTION</h1>
-            </div>
-            {{ form_start(form_register) }}
-            {{ form_errors(form_register) }}
-
-            <div class="form-group row">
-                <label class="col-sm-4 col-form-label text-left" for="" name="form_register[nomMember]">
-                    <h5>Entrez votre pseudo :</h5>
-                </label>
-                <div class="col-sm-8">
-                    {{ form_errors(form_register.nomMember) }}
-                    {{ form_widget(form_register.nomMember) }}
-                </div>
-            </div>
-
-            <div class="form-group row">
-                <label class="col-sm-4 col-form-label text-left" for="pass">
-                    <h5>Entrez votre mot de passe :
-                    </h5>
-                </label>
-                <div class="col-sm-8">
-                    {{ form_errors(form_register.password.first) }}
-                    {{ form_widget(form_register.password.first) }}
-                </div>
-            </div>
-
-            <div class="form-group row">
-                <label class="col-sm-4 col-form-label text-left" for="confpass">
-                    <h5>Confirmez votre mot de passe :
-                    </h5>
-                </label>
-                <div class="col-sm-8">
-                    {{ form_errors(form_register.password.first) }}
-                    {{ form_widget(form_register.password.second) }}
-                </div>
-            </div>
-
-            <div class="form-group row">
-                <label class="col-sm-4 col-form-label text-left" for="mail">
-                    <h5>Entrez votre email :
-                    </h5>
-                </label>
-                <div class="col-sm-8">
-                    {{ form_errors(form_register.mailMember) }}
-                    {{ form_widget(form_register.mailMember) }}
-                </div>
-            </div>
-            {# Inclusion de CSRF Token #}
-            {{ form_widget(form_register._token) }}
-            {# {{ form_register._token.vars.value }} #}
-            {#<input type="hidden" name="form_register[_token]" value="{{ form_register._token.vars.value }}" /> #}
-
-                <div class="row justify-content-center"> <input class="btn btn-secondary btn-lg" name="forminscription" type="submit" value="S'inscrire"/>
-                <input class=" btn btn-secondary btn-md offset-sm-1" name="reinitialiser" type="reset" value="Réinitialiser"/>
-            </div>
-
-            {{ form_end(form_register, {'render_rest': false}) }}
-
+<div class="jumbotron Jumbotron-fluid justify-content-center">
+    <div class="container">
+        <div class="form-group row">
+            <h1>INSCRIPTION</h1>
         </div>
-        {# Class CONTAINER #}
+        {{ form_start(form_register) }}
+        <div class="error_form">
+            {{ form_errors(form_register) }}
+        </div>
+
+        <div class="form-group row">
+            <label class="col-sm-4 col-form-label text-left" for="" name="form_register[nomMember]">
+                <h5>Entrez votre pseudo :</h5>
+            </label>
+            <div class="col-sm-8">
+                {{ form_errors(form_register.nomMember) }}
+                {{ form_widget(form_register.nomMember) }}
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <label class="col-sm-4 col-form-label text-left" for="pass">
+                <h5>Entrez votre mot de passe :
+                </h5>
+            </label>
+            <div class="col-sm-8">
+                {{ form_errors(form_register.password.first) }}
+                {{ form_widget(form_register.password.first) }}
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <label class="col-sm-4 col-form-label text-left" for="confpass">
+                <h5>Confirmez votre mot de passe :
+                </h5>
+            </label>
+            <div class="col-sm-8">
+                {{ form_errors(form_register.password.first) }}
+                {{ form_widget(form_register.password.second) }}
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <label class="col-sm-4 col-form-label text-left" for="mail">
+                <h5>Entrez votre email :
+                </h5>
+            </label>
+            <div class="col-sm-8">
+                {{ form_errors(form_register.mailMember) }}
+                {{ form_widget(form_register.mailMember) }}
+            </div>
+        </div>
+        {# Inclusion de CSRF Token #}
+        {{ form_widget(form_register._token) }}
+
+        <div class="row justify-content-center"> <input class="btn btn-secondary btn-lg" name="forminscription"
+                type="submit" value="S'inscrire" />
+            <input class=" btn btn-secondary btn-md offset-sm-1" name="reinitialiser" type="reset"
+                value="Réinitialiser" />
+        </div>
+
+        {{ form_end(form_register, {'render_rest': false}) }}
+
     </div>
-    {# Jumbotron #}
+    {# Class CONTAINER #}
+</div>
+{# Jumbotron #}
 
 {% endblock %}

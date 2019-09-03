@@ -21,7 +21,7 @@ class RecetteRepository extends ServiceEntityRepository
 
     /**
      * Get all the recettes for a member
-     * Return un array of arrays.
+     * Return one array of arrays.
      * Each array contains : One 'recette' object, plus 5 properties
      *
      * @param int $idMember

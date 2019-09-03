@@ -9,6 +9,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
@@ -20,16 +21,19 @@ class RecetteType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('datRecet')
+            ->add('datRecet', DateType::class, [
+                'widget' => 'text'
+                ])
             ->add('qteAro', NumberType::class, [
                 'invalid_message' => 'La quantité d\'arôme de la recette n\'est pas une valeur numérique.'
                 ])
-            // ->add('qteAro', TextareaType::class, ['attr' => ['label' => 'Quantité d`\arôme de la recette'] ])
             ->add('qteBas', NumberType::class, [
                 'invalid_message' => 'La quantité de base de la recette n\'est pas une valeur numérique.'
                 ])
             ->add('qteTot', IntegerType::class)
-            ->add('datStee')
+            ->add('datStee', DateType::class, [
+                'widget' => 'text'
+                ])
             ->add('etaStee', ChoiceType::class, [
                 'choices' => [
                     'STEEP' => 'STEEP',

@@ -1,157 +1,123 @@
 var monApp = angular.module('newDiy', []);
-monApp.controller('newDiyCtrl', function($scope, $http) {
+monApp.controller('newDiyCtrl', function ($scope, $http) {
 
-	// Récupère les tables "Arome" et "Base" en json :
-	$http.get("../model/json/getJson.php?table=Arome")
-	 .then(function (response) {
-	 	$scope.dataArome = response.data;
-	 });
+	// Declare variables :
+	var baseCorrectif, dosageFab;
+	$scope.baseLegend = "50 % PG / 50 % VG";
+	$scope.decimal = '[1-5]?[0-9]*(\.|\,)?[0-9]';
+	$scope.entier = '[1-9]?[0-9]*';
 
-	 $http.get("../model/json/getJson.php?table=Base")
-	 .then(function (retour) {
-	 	$scope.dataBase = retour.data;
-	 });
-
-	 // Déclaration des variables nécessaires aux calculs :
-	 var idSelect, idBaseSelect, baseCorrectif, resDosage, nbJdeSteep;
-	 $scope.creaRecette = new Date().toLocaleDateString();
-	 if (!idBaseSelect){
-	 	idBaseSelect = 6;
-	 	$scope.pgChoice= 50;
-	 }
-
-	// Envoi du formulaire depuis verif() :
-	$scope.postForm = function(){
-	    var data = {
-	    	'ID_USER' : "",
-	    	'ID_BASE' : idBaseSelect,
-	        'DAT_RECET' : $scope.creaRecette,
-	        'QTE_ARO' : $scope.aroQte,
-	        'QTE_BAS' : $scope.baseQte,
-	        'QTE_TOT' : $scope.totalQte,
-	        'DAT_STEE' : $scope.steep_pret,
-	        'ID_ARO' : $scope.aro,
-	        'DOS_ARO' : $scope.dos
-	    };
-
-	    $http.post("../controllers/new_DiyController.php", data)
-		 	.then(function (response) {
-		 		console.log(response.data);
-		 		$scope.msg = response.data;
-		 		if ($scope.msg === 'success'){
-		 			$scope.msg = "Votre recette est désormais enregistrée";
-		 			$scope.msgClass = 'success';
-		 		}
-		 		else $scope.msgClass = 'danger';
-		 		$scope.resetForm();
-		 	});
-	};
-
-	// Verification du formulaire :
-	$scope.verif = function() {
-		if ($scope.aro && $scope.dos && $scope.totalQte && idBaseSelect
-			&& $scope.creaRecette && $scope.aroQte && $scope.baseQte
-			&& $scope.steep_pret && $scope.steep_prevu){
-			console.log ("le formulaire est OK");
-			$scope.postForm();
-		}
-		else {
-			$scope.msg = "Votre recette n'a pas été enregistrée";
-			$scope.msgClass = 'danger';
-		}
-	};
-
-	$scope.verifAro = function(){
-		// Choix arôme
-		if (!$scope.aro && $scope.dos && $scope.totalQte){
-			return true;
-		}
-		else return false;
-	};
-
-	$scope.verifDos = function(){
-		// % d'arome
-		if (!$scope.dos){
-			return true;
-		}
-		if ($scope.dos && formRecette.choix_dosage.$dirty){
-			if ($scope.dos < 1 || $scope.dos > 50){
-				return true;
+	// Init the values of the form if submitted before :
+	$scope.lastSubmit = function (datasFromRequest, json_aromes, json_bases) {
+		var dateRecette = new Date().toLocaleDateString();
+		$scope.formateDate(dateRecette, "recet");
+		if (datasFromRequest.length > 2) {
+			datasFromRequest = JSON.parse(datasFromRequest);
+			for (key in datasFromRequest["recette"]) {
+				if (datasFromRequest["recette"][key] != undefined) {
+					if (key == "idBase") {
+						$scope.base_id = parseInt(datasFromRequest["recette"][key]);
+						for (var i = 0; i < json_bases.length; i++) {
+							if ($scope.base_id == json_bases[i]['base_id']) {
+								baseCorrectif = json_bases[i]['base_correctif'];
+								$scope.baseLegend = json_bases[i]['base_pg'] + " % PG / " + (100 - json_bases[i]['base_pg']) + " % VG ";
+							}
+						}
+					}
+					if (key == "qteTot") $scope.qte_tot = parseInt(datasFromRequest["recette"][key]);
+					if (key == "qteBas") $scope.qte_bas = parseFloat(datasFromRequest["recette"][key]);
+					if (key == "qteAro") $scope.qte_aro = parseFloat(datasFromRequest["recette"][key]);
+					if (key == "datStee") {
+						var strDate = datasFromRequest["recette"][key]["day"] + "/" + datasFromRequest["recette"][key]["month"] + "/" + datasFromRequest["recette"][key]["year"];
+						$scope.formateDate(strDate, "stee");
+					}
+					if (key == "aromeRecettes" && datasFromRequest["recette"]["aromeRecettes"][0]["idAro"] != undefined) {
+						$scope.arome_id = datasFromRequest["recette"]["aromeRecettes"][0]["idAro"];
+						for (var i = 0; i < json_aromes.length; i++) {
+							if ($scope.arome_id == json_aromes[i]['aro_id']) {
+								dosageFab = json_aromes[i]['aro_dos_fab'];
+								$scope.aro_nb_steep = json_aromes[i]['aro_nb_steep'];
+							}
+						}
+					}
+					if (key == "aromeRecettes" && datasFromRequest["recette"]["aromeRecettes"][0]["dosAro"] != undefined) $scope.dosage = datasFromRequest["recette"]["aromeRecettes"][0]["dosAro"];
+				}
 			}
 		}
-		else return false;
-	};
-
-	$scope.verifQte = function() {
-		// quantité totale
-		if (!$scope.totalQte ){
-			return true;
-		}
-		if ($scope.totalQte && formRecette.total_recette.$dirty){
-			if ($scope.totalQte < 5 || $scope.totalQte > 1000){
-				return true;
-			}
-		}
-		else return false;
-	};
-	// Réintialisation du formulaire :
-	$scope.resetForm = function(){
-		$scope.formRecette.$setPristine();
-		$scope.formRecette.$setUntouched();
-		formRecette.$submitted = false;
-		$scope.aro= undefined;
-		$scope.dos= undefined ;
-		$scope.totalQte= undefined;	
-		$scope.baseQte= undefined;
-		$scope.aroQte= undefined ;
-		$scope.steep_pret= undefined;
-		$scope.steep_prevu= undefined ;
-		idBaseSelect = 6;
-	 	$scope.pgChoice= 50;
 	}
-	
- 	// ID de l'arôme > Hydrate Dosage Fabricant + reinitialise base à 50/50:
- 	$scope.aromeCheck = function(){
- 		idSelect = $scope.aro ;
- 		for (var i = 0; i < $scope.dataArome.length; i++) {
-		    if ( idSelect == $scope.dataArome[i].ID_ARO) {
-		    	resDosage = $scope.dataArome[i].DOS_FAB ;
-		    	nbJdeSteep =  $scope.dataArome[i].NB_J_STEE;
-		    }
-		}
-		$scope.dos = parseFloat(resDosage);
- 	} 
 
- 	// Choix PG > renseigne l'id de la base sélectionnée
- 	// et applique le correctif sur $scope.dos  :
- 	$scope.pgCheck = function(){
- 		var pgSelect = $scope.pgChoice ;
- 		for (var i = 0; i < $scope.dataBase.length; i++) {
-		    if ( pgSelect == $scope.dataBase[i].DOS_PG) {
-		    	idBaseSelect = parseInt($scope.dataBase[i].ID_BASE, 10) ;
-		    	baseCorrectif = parseFloat($scope.dataBase[i].CORRECTIF) ; 
-		    }
+	// Get the 'dosage fabricant' and the 'nombre de jours de steep' of the selected 'arome':
+	$scope.selectedArome = function (dataAromesJson) {
+		if ($scope.arome_id) {
+			for (var i = 0; i < dataAromesJson.length; i++) {
+				if ($scope.arome_id == dataAromesJson[i]['aro_id']) {
+					dosageFab = dataAromesJson[i]['aro_dos_fab'];
+					$scope.dosage = dataAromesJson[i]['aro_dos_fab'];
+					$scope.aro_nb_steep = dataAromesJson[i]['aro_nb_steep'];
+					$scope.calculateSteep();
+					$scope.calculateDosage();
+					$scope.calculateNewDiy();
+				}
+			}
 		}
-		// applique le correctif SI un arôme est choisi:
-		if ($scope.aro){
-			$scope.dos = (Math.round(baseCorrectif*resDosage*10) )/10;
+	}
+
+	// Get the 'correctif' of the selected 'base':
+	$scope.selectedBase = function (dataBasesJson) {
+		if ($scope.base_id) {
+			for (var i = 0; i < dataBasesJson.length; i++) {
+				if ($scope.base_id == dataBasesJson[i]['base_id']) {
+					baseCorrectif = dataBasesJson[i]['base_correctif'];
+					$scope.baseLegend = dataBasesJson[i]['base_pg'] + " % PG / " + (100 - dataBasesJson[i]['base_pg']) + " % VG ";
+					if ($scope.dosage) $scope.calculateDosage();
+					$scope.calculateNewDiy();
+				}
+			}
 		}
- 	} 
+	}
 
- 	// Calcul de la recette (arome, puis base)
- 	$scope.calculRecette = function(){
- 		if (this.aro && this.dos && this.pgChoice && this.totalQte){
- 			this.aroQte = this.totalQte * (this.dos/100);
- 			this.aroQte = (Math.round(this.aroQte*10) )/10;
- 			this.baseQte = this.totalQte - this.aroQte;
- 			// calcul STEEP
- 			this.steep_prevu = nbJdeSteep;
+	// Init the 'correctif' of the default 'base' :
+	$scope.deleteCorr = function () {
+		if ($scope.dosage) {
+			correctif = 1;
+		}
+	}
 
- 			// Obtiens la date actuelle, convertit en millisecondes, puis ajoute NbjourSteep X 86400000 ms/jour. 
- 			// Pour hydrater this.steep_pret. Nouvel Objet Date d'après la nouvelle valeur, conversion en LocaleSTRING
- 			var prevu = new Date().getTime() + (86400000 * nbJdeSteep);
- 			this.steep_pret = new Date(prevu).toLocaleDateString();
- 		}
- 	}
+	// Calculate the different values of the 'recette' :
+	$scope.calculateNewDiy = function () {
+		if (this.arome_id && this.dosage && this.base_id && this.qte_tot) {
+			this.dosage = parseFloat(($scope.dosage).toString().replace(",", "."));
+			this.qte_aro = this.qte_tot * (this.dosage / 100);
+			this.qte_aro = (Math.round(this.qte_aro * 10)) / 10;
+			this.qte_bas = this.qte_tot - this.qte_aro;
+		}
+	}
+
+	// Calculate the date of steep of the 'recette' :
+	$scope.calculateSteep = function () {
+		var prevu = new Date().getTime() + (86400000 * $scope.aro_nb_steep);
+		prevu = new Date(prevu).toLocaleDateString();
+		$scope.formateDate(prevu, "stee");
+	}
+
+	// Actualize the 'dosage' of the 'recette' :
+	$scope.calculateDosage = function () {
+		if ($scope.dosage && $scope.base_id) $scope.dosage = (Math.round(baseCorrectif * dosageFab * 10)) / 10;
+	}
+
+	// Transform JS "new Date().toLocaleDateString()" for Symfony DateTimeType validation :
+	$scope.formateDate = function (jsDate, attribute) {
+		jsDate = jsDate.split("/");
+		if (attribute == "stee") {
+			$scope.dat_stee_day = jsDate[0];
+			$scope.dat_stee_month = jsDate[1];
+			$scope.dat_stee_year = jsDate[2];
+		}
+		if (attribute == "recet") {
+			$scope.dat_recet_day = jsDate[0];
+			$scope.dat_recet_month = jsDate[1];
+			$scope.dat_recet_year = jsDate[2];
+		}
+	}
 });
 

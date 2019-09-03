@@ -90,7 +90,7 @@ class HomeController extends AbstractController
     public function showRecettesMember(Request $request, RecetteRepository $repo, ObjectManager $manager, $status='oui')
     {
         $idMember = $this->getUser()->getIdMember();
-        $order = [0 => 'r.datRecet', 1 => 'DESC'];
+        $order = [0 => 'r.datRecet', 1 => 'desc'];
 
         if ($request->request->get('tri_recette') !== null) {
             $order = explode(":", $request->request->get('tri_recette'), 2);
@@ -100,7 +100,8 @@ class HomeController extends AbstractController
         return $this->render('home/mes_recettes.html.twig', [
             'controller_name' => 'HomeController',
             'recettes' => $recettes,
-            'status' => $status
+            'status' => $status,
+            'selectedTri' => $order[0].":".$order[1]
         ]);
     }
 
@@ -146,34 +147,40 @@ class HomeController extends AbstractController
     public function makeNewDiy(Request $request, ObjectManager $manager, AromeRepository $repo, BaseRepository $repoBase, RecetteRepository $repoRecet)
     {
         $maRecette = new Recette();
-        dump($maRecette);
-     
+        $maRecette->setIdMember($this->getUser());
+
         $newDiyForm = $this->createForm(RecetteType::class, $maRecette);
 
-        $listeAromes = $repo->findAll();
+        // Json datas for AngularJS :
+        $listeAromes = $repo->findBy(array('affAro' => 'oui'));
+        $json_aromes = $repo->arrayOfAromesToJson($listeAromes);
         $listeBases = $repoBase->findAll();
+        $json_bases = $repoBase->arrayOfBasesToJson($listeBases);
+
         
         $newDiyForm->handleRequest($request);
+        // For rehydrating the view if the submitted datas failed :
+        $datas = json_encode($request->request->all());
 
-        $datas= $request->request->all();
         
         if ($newDiyForm->isSubmitted() && $newDiyForm->isValid()) {
-            dump($maRecette);
-
             $manager->persist($maRecette);
             $manager->flush();
             $this->addFlash(
                 'success',
                 'Votre nouvelle recette est désormais sauvegardée'
             );
-            // return $this->redirectToRoute('mydiy');
+            return $this->redirectToRoute('mydiy');
         }
  
         return $this->render('home/new_diy.html.twig', [
             'controller_name' => 'HomeController',
             'form_newdiy' => $newDiyForm->createView(),
             'listeAromes' => $listeAromes,
-            'listeBases' => $listeBases
+            'listeBases' => $listeBases,
+            'json_aromes' => $json_aromes,
+            'json_bases' => $json_bases,
+            'datas_on_request' => $datas
         ]);
     }
 }

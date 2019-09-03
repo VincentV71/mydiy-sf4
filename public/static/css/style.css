@@ -119,6 +119,7 @@ div.justify-content-center>div> a {
 
 .card-block {
   /*height: 100%;*/
+  /* text-align: center;  */
   border-radius: 0 0 15px 15px;
   background-color: white;
 }
@@ -441,7 +442,16 @@ input#mlBase {
 input[type=number]#choix_dosage{ 
   width: 55px;
 }
-
+#recette_aromeRecettes_0_dosAro {
+    display: block;
+}
+mark {
+    background-color: #ffd428;
+}
+.error_form{
+  color:red;
+  background-color: #ffe6e6;
+}
 
 
 /*Colorize dropdown

@@ -20,7 +20,6 @@ class MemberType extends AbstractType
             ->add('nomMember', TextType::class, ['attr' => ['label' => 'Entrez votre pseudo', 'class' => 'form-control'] ])
             ->add('mailMember', EmailType::class, ['attr' => ['label' => 'Entrez votre mail', 'class' => 'form-control'] ])
             ->add('affMember', HiddenType::class)
-            // ->add('password', PasswordType::class, ['attr' => ['label' => 'Entrez votre mot de passe'] ])
             ->add('password', RepeatedType::class, [
                 'type' => PasswordType::class,
                 'invalid_message' => 'Le mot de passe et sa confirmation doivent être similaires',
@@ -37,8 +36,7 @@ class MemberType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => Member::class,
-            // 'csrf_protection' => false
+            'data_class' => Member::class
         ]);
     }
 }

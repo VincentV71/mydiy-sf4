@@ -1,23 +1,29 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}
-    Modifier une recette
+Modifier une recette
 {% endblock %}
 
 {% block body %}
 
-    <div class="container">
-        {{ form_start(recetteForm) }}
+<div class="container">
+    {{ form_start(recetteForm) }}
+    <div class="error_form">
         {{ form_errors(recetteForm) }}
+    </div>
 
-        <div class="row mt-3 pl-3">
-            <medium class="text mr-5 mb-2">Modifiez votre recette :
-            </medium>
-            <br>
-        </div>
-        <hr>
-        <div class="col-xs-12 col-sm-6 col-md-6 col-lg-4 col-xl-3 mb-3 ">
-            <div class="card pt-1 {{ recetteForm.etaStee.vars.data }}">
+    <div class="row mt-3 pl-3">
+        <medium class="text mr-5 mb-2">Modifiez votre recette :
+        </medium>
+        <br>
+    </div>
+    <hr>
+    <div class="col-xs-12 col-sm-6 col-md-6 col-lg-4 col-xl-3 mb-3 ">
+        {% if recetteForm.affRecet.vars.data == "oui" %}
+        <div class="card pt-1 {{ recetteForm.etaStee.vars.data|lower }}">
+            {% else %}
+            <div class="card pt-1 {{ recetteForm.affRecet.vars.data|lower }}">
+                {% endif %}
                 <div class="cartouche">
                     <strong>
                         {{ recetteForm.etaStee.vars.data }}
@@ -56,16 +62,16 @@
                         <li class="list-group-item">
                             <span>
                                 {% if recetteForm.etoiles.vars.data > 0 %}
-                                    {% for item in 1..recetteForm.etoiles.vars.data %}
-                                        <img height="28" src="{{ asset('static/img/star_36px.png') }}" width="28">
-                                    {% endfor %}
-                                    {% for item in 1..(5-recetteForm.etoiles.vars.data) if recetteForm.etoiles.vars.data < 5 %}
-                                        <img height="28" src="{{ asset('static/img/star_outline_36px.png') }}" width="28">
-                                    {% endfor %}
+                                {% for item in 1..recetteForm.etoiles.vars.data %}
+                                <img height="28" src="{{ asset('static/img/star_36px.png') }}" width="28">
+                                {% endfor %}
+                                {% for item in 1..(5-recetteForm.etoiles.vars.data) if recetteForm.etoiles.vars.data < 5 %}
+                                <img height="28" src="{{ asset('static/img/star_outline_36px.png') }}" width="28">
+                                {% endfor %}
                                 {% else %}
-                                    {% for item in 1..5 %}
-                                        <img height="28" src="{{ asset('static/img/star_outline_36px.png') }}" width="28">
-                                    {% endfor %}
+                                {% for item in 1..5 %}
+                                <img height="28" src="{{ asset('static/img/star_outline_36px.png') }}" width="28">
+                                {% endfor %}
                                 {% endif %}
                             </span>
                         </li>
@@ -78,22 +84,29 @@
                     </ul>
                     {# DropUp menu PRIMAIRE #}
                     <div class="dropup mt-3">
-                        <button aria-expanded="false" aria-haspopup="true" class="btn btn-secondary dropdown-toggle w-100" data-toggle="dropdown" id="dropdownMenu2" type="button">
+                        <button aria-expanded="false" aria-haspopup="true"
+                            class="btn btn-secondary dropdown-toggle w-100" data-toggle="dropdown" id="dropdownMenu2"
+                            type="button">
                             Modifier
                         </button>
                         <div aria-labelledby="dropdownMenu2" class="dropdown-menu">
-                            <button aria-controls="deplieEtoiles" aria-expanded="false" class="dropdown-item" data-target="#deplieEtoiles" data-toggle="collapse" type="button">Noter</button>
+                            <button aria-controls="deplieEtoiles" aria-expanded="false" class="dropdown-item"
+                                data-target="#deplieEtoiles" data-toggle="collapse" type="button">Noter</button>
 
-                            <button aria-controls="deplieCommentaires" aria-expanded="false" class="dropdown-item" data-target="#deplieCommentaires" data-toggle="collapse" type="button">Commenter</button>
+                            <button aria-controls="deplieCommentaires" aria-expanded="false" class="dropdown-item"
+                                data-target="#deplieCommentaires" data-toggle="collapse"
+                                type="button">Commenter</button>
 
-                            <button aria-controls="deplieSteep" aria-expanded="false" class="dropdown-item" data-target="#deplieSteep" data-toggle="collapse" type="button">Modifier l'état du
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    steep</button>
+                            <button aria-controls="deplieSteep" aria-expanded="false" class="dropdown-item"
+                                data-target="#deplieSteep" data-toggle="collapse" type="button">Modifier l'état du
+                                steep</button>
 
-                            <button aria-controls="deplieSupprimer" aria-expanded="false" class="dropdown-item" data-target="#deplieSupprimer" data-toggle="collapse" type="button">
+                            <button aria-controls="deplieSupprimer" aria-expanded="false" class="dropdown-item"
+                                data-target="#deplieSupprimer" data-toggle="collapse" type="button">
                                 {% if recetteForm.affRecet.vars.data == "oui" %}
-                                    Désactiver
+                                Désactiver
                                 {% else %}
-                                    Activer
+                                Activer
                                 {% endif %}
                             </button>
                         </div>
@@ -110,8 +123,10 @@
                     <div class="collapse mt-2" id="deplieEtoiles">
                         <div class="row">
                             {{ form_widget(recetteForm.etoiles) }}
-                            <input type="submit"/>
-                            <button aria-controls="deplieEtoiles" aria-expanded="false" class="btn btn-secondary btn-md mt-2" data-target="#deplieEtoiles" data-toggle="collapse" type="button">X</button>
+                            <input type="submit" />
+                            <button aria-controls="deplieEtoiles" aria-expanded="false"
+                                class="btn btn-secondary btn-md mt-2" data-target="#deplieEtoiles"
+                                data-toggle="collapse" type="button">X</button>
                         </div>
                     </div>
 
@@ -121,8 +136,10 @@
                             <label for="comMember">
                                 Entrez votre commentaire :</label>
                             {{ form_widget(recetteForm.comMember) }}
-                            <input type="submit"/>
-                            <button aria-controls="deplieCommentaires" aria-expanded="false" class="btn btn-secondary btn-md mt-2" data-target="#deplieCommentaires" data-toggle="collapse" type="button">X</button>
+                            <input type="submit" />
+                            <button aria-controls="deplieCommentaires" aria-expanded="false"
+                                class="btn btn-secondary btn-md mt-2" data-target="#deplieCommentaires"
+                                data-toggle="collapse" type="button">X</button>
                         </div>
                     </div>
 
@@ -131,8 +148,10 @@
                         <div class="row">
                             <label for="etaStee">Actualisez le Steep :</label>
                             {{ form_widget(recetteForm.etaStee) }}
-                            <input type="submit"/>
-                            <button aria-controls="deplieSteep" aria-expanded="false" class="btn btn-secondary btn-md mt-2" data-target="#deplieSteep" data-toggle="collapse" type="button">X</button>
+                            <input type="submit" />
+                            <button aria-controls="deplieSteep" aria-expanded="false"
+                                class="btn btn-secondary btn-md mt-2" data-target="#deplieSteep" data-toggle="collapse"
+                                type="button">X</button>
                         </div>
                     </div>
 
@@ -141,8 +160,10 @@
                         <div class="row">
                             <label for="affRecet"></label>
                             {{ form_widget(recetteForm.affRecet) }}
-                            <input type="submit" value="Confirmer"/>
-                            <button aria-controls="deplieSupprimer" aria-expanded="false" class="btn btn-secondary btn-md mt-2" data-target="#deplieSupprimer" data-toggle="collapse" type="button">X</button>
+                            <input type="submit" value="Confirmer" />
+                            <button aria-controls="deplieSupprimer" aria-expanded="false"
+                                class="btn btn-secondary btn-md mt-2" data-target="#deplieSupprimer"
+                                data-toggle="collapse" type="button">X</button>
                         </div>
                     </div>
 
@@ -165,4 +186,5 @@
         </div>
         {{ form_end(recetteForm, {'render_rest': false}) }}
     </div>
-</div>{% endblock %}
+</div>
+{% endblock %}

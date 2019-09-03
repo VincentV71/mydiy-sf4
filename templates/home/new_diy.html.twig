@@ -1,67 +1,156 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello HomeController!
+{% block title %}
+Réalisez votre recette d'e-liquide Do It Yourself
 {% endblock %}
 
+{% block js_head %}
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.7/angular.min.js"></script>
+<script src="{{ asset('static/js/new_diy.js') }}" type="text/javascript"></script>
+{% endblock js_head %}
+
 {% block body %}
-
-    <div class="container">
-        <div>
-            <h1>NEW DIY</h1>
-            {{ form_start(form_newdiy) }}
+<div class="container">
+    <div>
+        <h5 class="spacer"><mark> Composez votre e-liquide :</mark></h5>
+        {{ form_start(form_newdiy) }}
+        <div class="error_form">
             {{ form_errors(form_newdiy) }}
+        </div>
 
-            {{ form_row(form_newdiy.datRecet) }}
-            {{ form_row(form_newdiy.qteAro) }}
-            {{ form_row(form_newdiy.qteBas) }}
-            {{ form_row(form_newdiy.qteTot) }}
-            {{ form_row(form_newdiy.datStee) }}
-            {{ form_row(form_newdiy.etaStee) }}
-            {{ form_row(form_newdiy.comMember) }}
-            {{ form_row(form_newdiy.affRecet) }}
-            {{ form_row(form_newdiy.etoiles) }}
-            {{ form_row(form_newdiy.idMember) }}
-            {{ form_row(form_newdiy.idBase) }}
-
-            {% for item in listeBases %}
-                <div>
-                    CORRECTIF =
-                    {{item.correctif}}</div>
-            {% endfor %}
-
-            {# The collection aromeRecettes is blank, must be rendered in html #}
+        <div ng-app="newDiy" ng-controller="newDiyCtrl" ng-cloak>
+            {% if datas_on_request %}
+            <input type="hidden" ng-model="datasSubmitted" ng-init="lastSubmit( {{ datas_on_request|json_encode() }} ,
+                {{ json_aromes }}, {{ json_bases }})">
+            {% endif %}
             <div id="recette_aromeRecettes" name="recette[aromeRecettes]">
-                <div id="recette_aromeRecettes_0" name="recette[aromeRecettes][0]">
-                    <div>
-                        <label for="recette[aromeRecettes][0][dosAro]">
-                            Dosage</label>
-                        <input id="recette_aromeRecettes_0_dosAro" name="recette[aromeRecettes][0][dosAro]" type="text" value=""/>
-                    </div>
-                    <div>
+                <div class="row justify-content-start spacer" id="recette_aromeRecettes_0"
+                    name="recette[aromeRecettes][0]">
+                    <div class="col-6">
                         <label for="recette[aromeRecettes][0][idAro]">
-                            Id Arome</label>
-                        <select id="recette_aromeRecettes_0_idAro" name="recette[aromeRecettes][0][idAro]">
+                            AROME :</label>
+                        <select ng-model="arome_id" ng-change="
+                                selectedArome({{ json_aromes }})" class="form-control form-control-sm"
+                            id="recette_aromeRecettes_0_idAro" name="recette[aromeRecettes][0][idAro]">
                             {% for item in listeAromes %}
-                                <option value="{{item.idAro}}">{{item}}
-                                    Nb de jours de steep =
-                                    {{item.nbJStee}}</option>
-                            {% endfor %}
+                            <option value="{{item.idAro}}">{{item}}</option>
+                            {% endfor %} #}
                         </select>
                     </div>
-                    <div>
-                        <label for="recette[aromeRecettes][0][idRecet]">
-                            Id Recette</label>
-                        <input id="recette_aromeRecettes_0_idRecet" name="recette[aromeRecettes][0][idRecet]" type="text" value=""/>
+                    <div class="col-6">
+                        <label for="recette[aromeRecettes][0][dosAro]">
+                            DOSAGE :</label>
+                        <input ng-model="dosage" ng-pattern="decimal" ng-change="deleteCorr(); calculateNewDiy()"
+                            id="recette_aromeRecettes_0_dosAro" name="recette[aromeRecettes][0][dosAro]" value="" />
                     </div>
                 </div>
+            </div>
+            {# fin div class ROW }} #}
+            <hr class="spacer">
+
+            <div class="progress-box">
+                <div class="percentage-cur">
+                    <div style="display: none;" ng-model="listBases">
+                    </div>
+                    <label>TYPE DE BASE :</label>
+                    <span class="num" ng-if="baseLegend">
+                        {% verbatim %}
+                        {{ baseLegend }}
+                        {% endverbatim %}
+                    </span>
+                </div>
+                <div class="progress-bar progress-bar-slider">
+                    <input class="progress-slider" ng-model="base_id" id="{{ form_newdiy.idBase.vars.id }}"
+                        name="{{ form_newdiy.idBase.vars.full_name }}" max="11" min="1" step="1" type="range"
+                        ng-change="selectedBase( {{ json_bases }} )">
+                    {% verbatim %}
+                    <div class="inner" ng-style="{ width: (base_id*10-10) + '%' || '0%' }"></div>
+                    {% endverbatim %}
+                </div>
+            </div>
+            <hr class="spacer" id="hr_spacer">
+
+            <div>
+                <label>{{ form_label(form_newdiy.qteTot, 'QUANTITE TOTALE DESIREE :') }}</label>
+                {{ form_widget(form_newdiy.qteTot, {'attr': {'ng-model': 'qte_tot', 'ng-change': 'calculateNewDiy()', 'min': '5', 
+                    'max': '1000', 'step': '1', 'type': 'range', 'ng-pattern': 'entier'}})
+                }}
+            </div>
+
+            <hr class="spacer">
+            <div id="rctContainer">
+                <div class="row" id="spacerRecet">
+                    <div class="col-6 d-flex justify-content-center font-weight-light ">
+                        <div>
+                            {% verbatim %}
+                            <h1>{{ qte_bas }}</h1>
+                            {% endverbatim %}
+                        </div>
+                    </div>
+                    <div class="col-6 d-flex justify-content-center font-weight-light">
+                        <span>
+                            {% verbatim %}
+                            <h1>{{ qte_aro }}</h1>
+                            {% endverbatim %}
+                        </span>
+                    </div>
+                </div>
+                <div class="row mt-1">
+                    <div class="col-6 d-flex justify-content-center ">
+                        <div>ml de BASE</div>
+                    </div>
+                    <div class="col-6 d-flex justify-content-center ">
+                        <span>ml d'AROME</span>
+                    </div>
+                </div>
+                <div class="row spacer mt-5">
+                    <div class="col-6 d-flex justify-content-center font-weight-light">
+                        <div>
+                            {% verbatim %}
+                            <h1>{{ aro_nb_steep }}</h1>
+                            {% endverbatim %}
+                        </div>
+                    </div>
+                    <div class="col-6 d-flex justify-content-center font-weight-light">
+                        <span ng-if="dat_stee_year">
+                            {% verbatim %}
+                            <h1>{{ dat_stee_day }}/{{ dat_stee_month }}/{{ dat_stee_year }}</h1>
+                            {% endverbatim %}
+                        </span>
+                    </div>
+                </div>
+                <div class="row mt-1 ">
+                    <div class="col-6 d-flex justify-content-center">
+                        <div>jours de Steep</div>
+                    </div>
+                    <div class="col-6 d-flex justify-content-center">
+                        <span>Date de fin de steep</span>
+                    </div>
+                </div>
+            </div>
+
+            <div style="display: none;">
+                {{ form_widget(form_newdiy.qteBas, {'attr': {'ng-model': 'qte_bas'}}) }}
+                {{ form_widget(form_newdiy.qteAro, {'attr': {'ng-model': 'qte_aro'}}) }}
+                {{ form_widget(form_newdiy.datStee.year, {'attr': {'ng-model': 'dat_stee_year'}}) }}
+                {{ form_widget(form_newdiy.datStee.month, {'attr': {'ng-model': 'dat_stee_month'}}) }}
+                {{ form_widget(form_newdiy.datStee.day, {'attr': {'ng-model': 'dat_stee_day'}}) }}
+                {{ form_widget(form_newdiy.datRecet.year, {'attr': {'ng-model': 'dat_recet_year'}}) }}
+                {{ form_widget(form_newdiy.datRecet.month, {'attr': {'ng-model': 'dat_recet_month'}}) }}
+                {{ form_widget(form_newdiy.datRecet.day, {'attr': {'ng-model': 'dat_recet_day'}}) }}
+                {{ form_row(form_newdiy.idMember) }}
+                {{ form_row(form_newdiy.etaStee) }}
+                {{ form_row(form_newdiy.comMember) }}
+                {{ form_row(form_newdiy.affRecet) }}
+                {{ form_row(form_newdiy.etoiles) }}
             </div>
 
             {{ form_row(form_newdiy._token) }}
             <button class="btn btn-outline-primary btn-lg btn-block spacer" type="submit">
                 Sauvegarder cette recette</button>
-
-            {{ form_end(form_newdiy, {'render_rest': false}) }}
-        </div>
-        <hr>
+        </div> {# fin div NG APP }} #}
+        {{ form_end(form_newdiy, {'render_rest': false}) }}
     </div>
+    <hr>
+</div> {# fin div class CONTAINER }} #}
 {% endblock %}
