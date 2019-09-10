@@ -96,7 +96,7 @@ class HomeController extends AbstractController
             $order = explode(":", $request->request->get('tri_recette'), 2);
         }
         $recettes = $repo->getDataRecettesByMember($idMember, $status, $order[0], $order[1]);
-        
+        dump($_SESSION);
         return $this->render('home/mes_recettes.html.twig', [
             'controller_name' => 'HomeController',
             'recettes' => $recettes,
