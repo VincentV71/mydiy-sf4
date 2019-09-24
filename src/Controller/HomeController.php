@@ -13,6 +13,7 @@ use App\Entity\AromeRecette;
 use App\Form\AromeRecetteType;
 use App\Repository\BaseRepository;
 use App\Repository\AromeRepository;
+use App\Repository\MemberRepository;
 use App\Repository\RecetteRepository;
 use Symfony\Component\Validator\Validation;
 use Symfony\Component\HttpFoundation\Request;
@@ -22,6 +23,7 @@ use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
 class HomeController extends AbstractController
@@ -39,10 +41,22 @@ class HomeController extends AbstractController
     /**
      * @Route("/connexion", name="login")
      */
-    public function connectUser()
+    public function connectUser(Request $request, MemberRepository $repo, AuthenticationUtils $authenticationUtils)
     {
+        $error = $authenticationUtils->getLastAuthenticationError();
+        $lastUsername = $authenticationUtils->getLastUsername();
+
+        $invalidEmail = false;
+
+        if ($lastUsername && $repo->findBy(array('mailMember' => $lastUsername))==[]) {
+            $invalidEmail = true;
+        }
+
         return $this->render('home/connection.html.twig', [
             'controller_name' => 'HomeController',
+            'last_username' => $lastUsername,
+            'error'         => $error,
+            'invalid_email'  => $invalidEmail
         ]);
     }
 
@@ -96,7 +110,6 @@ class HomeController extends AbstractController
             $order = explode(":", $request->request->get('tri_recette'), 2);
         }
         $recettes = $repo->getDataRecettesByMember($idMember, $status, $order[0], $order[1]);
-        dump($_SESSION);
         return $this->render('home/mes_recettes.html.twig', [
             'controller_name' => 'HomeController',
             'recettes' => $recettes,
@@ -134,9 +147,9 @@ class HomeController extends AbstractController
         }
 
         return $this->render('home/edit_recette.html.twig', [
-        'controller_name' => 'HomeController',
-        'recetteForm' => $recetteForm->createView(),
-        'paramRecette'=> $paramRecette
+            'controller_name' => 'HomeController',
+            'recetteForm' => $recetteForm->createView(),
+            'paramRecette'=> $paramRecette
         ]);
     }
 
@@ -161,7 +174,6 @@ class HomeController extends AbstractController
         $newDiyForm->handleRequest($request);
         // For rehydrating the view if the submitted datas failed :
         $datas = json_encode($request->request->all());
-
         
         if ($newDiyForm->isSubmitted() && $newDiyForm->isValid()) {
             $manager->persist($maRecette);

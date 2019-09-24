@@ -448,9 +448,16 @@ input[type=number]#choix_dosage{
 mark {
     background-color: #ffd428;
 }
-.error_form{
+.error_form, .violation_ng{
   color:red;
   background-color: #ffe6e6;
+  border-radius: 10px;
+  height: 40px;
+}
+div.error_form>ul>li,
+div.violation_ng>ul>li{
+  line-height: 40px;
+  vertical-align:middle;
 }
 
 

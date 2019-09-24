@@ -14,15 +14,26 @@ Réalisez votre recette d'e-liquide Do It Yourself
     <div>
         <h5 class="spacer"><mark> Composez votre e-liquide :</mark></h5>
         {{ form_start(form_newdiy) }}
-        <div class="error_form">
+        {% if not form_newdiy.vars.valid %}
+        <div class="error_form mt-4">
             {{ form_errors(form_newdiy) }}
         </div>
+        {% endif %}
+
 
         <div ng-app="newDiy" ng-controller="newDiyCtrl" ng-cloak>
             {% if datas_on_request %}
             <input type="hidden" ng-model="datasSubmitted" ng-init="lastSubmit( {{ datas_on_request|json_encode() }} ,
                 {{ json_aromes }}, {{ json_bases }})">
             {% endif %}
+            <div class="violation_ng mt-4" ng-if="violation">
+                <ul>
+                    <li>{% verbatim %}
+                        {{violation_msg}}
+                        {% endverbatim %}
+                    </li>
+                </ul>
+            </div>
             <div id="recette_aromeRecettes" name="recette[aromeRecettes]">
                 <div class="row justify-content-start spacer" id="recette_aromeRecettes_0"
                     name="recette[aromeRecettes][0]">
@@ -31,17 +42,20 @@ Réalisez votre recette d'e-liquide Do It Yourself
                             AROME :</label>
                         <select ng-model="arome_id" ng-change="
                                 selectedArome({{ json_aromes }})" class="form-control form-control-sm"
-                            id="recette_aromeRecettes_0_idAro" name="recette[aromeRecettes][0][idAro]">
+                            id="recette_aromeRecettes_0_idAro" required name="recette[aromeRecettes][0][idAro]">
                             {% for item in listeAromes %}
-                            <option value="{{item.idAro}}">{{item}}</option>
+                            <option value="{{item.idAro}}">{{item}}
+                            </option>
                             {% endfor %} #}
                         </select>
                     </div>
                     <div class="col-6">
                         <label for="recette[aromeRecettes][0][dosAro]">
-                            DOSAGE :</label>
-                        <input ng-model="dosage" ng-pattern="decimal" ng-change="deleteCorr(); calculateNewDiy()"
-                            id="recette_aromeRecettes_0_dosAro" name="recette[aromeRecettes][0][dosAro]" value="" />
+                            DOSAGE (%) :</label>
+                        <input ng-model="dosage" ng-model-options="{ updateOn: 'blur', allowInvalid: 'true' }"
+                            ng-pattern="decimal" required
+                            ng-change="deleteCorr(); checkValidDosage(); calculateNewDiy()"
+                            id="recette_aromeRecettes_0_dosAro" name="recette[aromeRecettes][0][dosAro]" />
                     </div>
                 </div>
             </div>
@@ -71,7 +85,7 @@ Réalisez votre recette d'e-liquide Do It Yourself
             <hr class="spacer" id="hr_spacer">
 
             <div>
-                <label>{{ form_label(form_newdiy.qteTot, 'QUANTITE TOTALE DESIREE :') }}</label>
+                <label>{{ form_label(form_newdiy.qteTot, 'QUANTITE TOTALE DESIREE (ml) :') }}</label>
                 {{ form_widget(form_newdiy.qteTot, {'attr': {'ng-model': 'qte_tot', 'ng-change': 'calculateNewDiy()', 'min': '5', 
                     'max': '1000', 'step': '1', 'type': 'range', 'ng-pattern': 'entier'}})
                 }}
@@ -146,7 +160,7 @@ Réalisez votre recette d'e-liquide Do It Yourself
             </div>
 
             {{ form_row(form_newdiy._token) }}
-            <button class="btn btn-outline-primary btn-lg btn-block spacer" type="submit">
+            <button class="btn btn-outline-primary btn-lg btn-block spacer" ng-click="formIsComplete()" type="submit">
                 Sauvegarder cette recette</button>
         </div> {# fin div NG APP }} #}
         {{ form_end(form_newdiy, {'render_rest': false}) }}

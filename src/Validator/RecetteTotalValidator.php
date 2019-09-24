@@ -20,7 +20,6 @@ class RecetteTotalValidator extends ConstraintValidator
         $qTot = $recette->getQteTot();
         $qBas = $recette->getQteBas();
         $qAro = $recette->getQteAro();
-        dump($recette);
 
         if (null === $qTot || '' === $qTot
             || null === $qBas || '' === $qBas
@@ -35,18 +34,4 @@ class RecetteTotalValidator extends ConstraintValidator
                 ->addViolation();
         }
     }
-
-    // public function validate($value, Constraint $constraint)
-    // {
-    //     /* @var $constraint \App\Validator\RecetteTotal */
-
-    //     if (null === $value || '' === $value) {
-    //         return;
-    //     }
-
-    //     // TODO: implement the validation here
-    //     $this->context->buildViolation($constraint->message)
-    //         ->setParameter('{{ value }}', $value)
-    //         ->addViolation();
-    // }
 }

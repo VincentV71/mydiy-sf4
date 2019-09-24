@@ -5,15 +5,17 @@
 
 {% block body %}
 
-<div class="jumbotron Jumbotron-fluid justify-content-center">
+<div class="jumbotron Jumbotron-fluid justify-content-center pt-3">
     <div class="container">
-        <div class="form-group row">
-            <h1>INSCRIPTION</h1>
+        <div class="form-group row ml-1">
+            <h2>INSCRIPTION</h2>
         </div>
         {{ form_start(form_register) }}
-        <div class="error_form">
+        {% if not form_register.vars.valid %}
+        <div class="error_form" style="height: 100%;">
             {{ form_errors(form_register) }}
         </div>
+        {% endif %}
 
         <div class="form-group row">
             <label class="col-sm-4 col-form-label text-left" for="" name="form_register[nomMember]">

@@ -17,12 +17,13 @@ class MemberType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('nomMember', TextType::class, ['attr' => ['label' => 'Entrez votre pseudo', 'class' => 'form-control'] ])
-            ->add('mailMember', EmailType::class, ['attr' => ['label' => 'Entrez votre mail', 'class' => 'form-control'] ])
+            ->add('nomMember', TextType::class, ['error_bubbling' => 'true', 'attr' => ['label' => 'Entrez votre pseudo', 'class' => 'form-control'] ])
+            ->add('mailMember', EmailType::class, ['error_bubbling' => 'true', 'attr' => ['label' => 'Entrez votre mail', 'class' => 'form-control'] ])
             ->add('affMember', HiddenType::class)
             ->add('password', RepeatedType::class, [
                 'type' => PasswordType::class,
                 'invalid_message' => 'Le mot de passe et sa confirmation doivent être similaires',
+                'error_bubbling' => 'true',
                 'options' => [
                     'attr' => ['class' => 'form-control']
                     ],

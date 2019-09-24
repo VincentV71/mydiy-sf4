@@ -30,7 +30,9 @@ class RecetteType extends AbstractType
             ->add('qteBas', NumberType::class, [
                 'invalid_message' => 'La quantité de base de la recette n\'est pas une valeur numérique.'
                 ])
-            ->add('qteTot', IntegerType::class)
+            ->add('qteTot', IntegerType::class, [
+                'invalid_message' => 'La quantité totale de la recette n\'est pas un nombre entier.'
+                ])
             ->add('datStee', DateType::class, [
                 'widget' => 'text'
                 ])

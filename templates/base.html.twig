@@ -47,11 +47,13 @@
     </nav>
 
     {# Affiche les MessageFlash Symfony (stockés dans session) #}
-    <div class="container">
+    <div class="">
         {% for label, messages in app.flashes(['warning', 'error', 'info', 'success']) %}
         {% for message in messages %}
-        <div class="alert alert-{{ label }}">
-            {{ message }}
+        <div class="alert alert-{{ label }} pl-4 mb-0">
+            <div class="container">
+                {{ message }}
+            </div>
         </div>
         {% endfor %}
         {% endfor %}
